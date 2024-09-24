@@ -244,8 +244,8 @@ export const CredentialsProvider = ({
     });
 
     axios
-      .put(
-        apiRoute.board.mainRoute,
+      .patch(
+        apiRoute.board.mainRoute + data._id,
         {
           title: data.title,
           description: data.description,
@@ -349,7 +349,7 @@ export const CredentialsProvider = ({
     });
 
     axios
-      .put(
+      .patch(
         apiRoute.lists.mainRoute + listId,
         {
           title: data.title,
@@ -485,7 +485,7 @@ export const CredentialsProvider = ({
     });
 
     axios
-      .put(
+      .patch(
         apiRoute.cards.mainRoute + cardId,
         {
           title: data.title,
@@ -625,7 +625,7 @@ export const CredentialsProvider = ({
     });
 
     axios
-      .put(
+      .patch(
         apiRoute.comments.mainRoute + commentId,
         {
           content: data.content,

@@ -27,13 +27,46 @@ const ListPage = () => {
     });
   }, [board]);
 
+  const [titleEditMode, setTitleEditMode] = useState(false);
+  const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
+
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
-          <p className="font-primary font-bold text-vw-md">
-            {selectedBoard?.title}
-          </p>
+          {titleEditMode ? (
+            <input
+              type="text"
+              value={presentTitle}
+              onChange={(e) => {
+                e.preventDefault();
+                setPresentTitle(e.target.value);
+              }}
+              onBlur={() => {
+                setTitleEditMode(false);
+
+                const currentData = credentialsController.lookingBoard;
+                credentialsController.boardUpdate({
+                  title: presentTitle || "",
+                  _id: currentData?._id || "",
+                  description: currentData?.description || "",
+                  visibility: currentData?.visibility || "private",
+                  createdAt: currentData?.createdAt || "",
+                  userId: currentData?.userId || ""
+                });
+              }}
+              className="font-primary font-bold text-vw-md"
+            />
+          ) : (
+            <p
+              className="font-primary font-bold text-vw-md cursor-pointer"
+              onClick={() => {
+                setTitleEditMode(true);
+              }}
+            >
+              {presentTitle}
+            </p>
+          )}
           <p className="font-primary text-vw-md">{" / Select List"}</p>
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"

@@ -38,7 +38,7 @@ const KanbanPage = () => {
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
             onClick={() =>
-              credentialsController.cardsCreate({
+              credentialsController.listsDelete({
                 listId: list as string
               })
             }
