@@ -76,7 +76,10 @@ const ListPage = () => {
           classNameInput="w-full"
         />
         <ButtonCustom
-          onClick={router.back}
+          onClick={() => {
+            credentialsController.emptyAll();
+            router.back();
+          }}
           text="Back"
           type="primary"
           classNameDiv="w-fit"
@@ -91,15 +94,16 @@ const ListPage = () => {
         />
       </div>
       <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw]">
-        {credentialsController.listsData.map((List, index) => (
+        {credentialsController.listsData.map((list, index) => (
           <CardItem
             key={index}
-            title={List.title}
+            title={list.title}
             onClick={() => {
-              console.log("List: ", List.title);
+              // add route to list page
+              router.push(`${board}/${list._id}`);
             }}
-            createdAt={List.createdAt}
-            createdBy={List.createdBy}
+            createdAt={list.createdAt}
+            // createdBy={List.createdBy}
             cardType="list"
           />
         ))}

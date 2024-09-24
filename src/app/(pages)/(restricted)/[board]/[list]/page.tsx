@@ -3,87 +3,56 @@
 import ButtonCustom from "@/components/ButtonCustom";
 import CardItem from "@/components/CardItem";
 import SearchBar from "@/components/SearchBar";
-import { enumDeadline } from "@/helper/typesEnums";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
   const router = useRouter();
 
-  const uname = "Benaya Imanuela";
+  const { list } = useParams();
+  const credentialsController = useCredentialsContext();
+
+  const cardsFetchRef = useRef(credentialsController.cardsFetch);
+  useEffect(() => {
+    cardsFetchRef.current({
+      listId: list as string
+    });
+  }, [list]);
+
   const [search, setSearch] = useState("");
 
   const progressList = ["to-do", "in-progress", "done"];
-
-  const lists = [
-    {
-      title: "Card Title",
-      createdAt: "2021-10-10",
-      createdBy: "Benaya Imanuela",
-      dueDate: "2021-11-10",
-      description: "Loerm ispum dolor sit amet",
-      assignedTo: ["Benaya Imanuela", "Benaya"],
-      status: "done" as enumDeadline
-    },
-    {
-      title: "Card Title",
-      createdAt: "2021-10-10",
-      createdBy: "Benaya Imanuela",
-      dueDate: "2021-11-10",
-      description: "Loerm ispum dolor sit amet",
-      assignedTo: ["Benaya Imanuela", "Benaya"],
-      status: "in-progress" as enumDeadline
-    },
-    {
-      title: "Card Title",
-      createdAt: "2021-10-10",
-      createdBy: "Benaya Imanuela",
-      dueDate: "2021-11-10",
-      description: "Loerm ispum dolor sit amet",
-      assignedTo: ["Benaya Imanuela", "Benaya"],
-      status: "to-do" as enumDeadline
-    },
-    {
-      title: "Card Title",
-      createdAt: "2021-10-10",
-      createdBy: "Benaya Imanuela",
-      dueDate: "2021-11-10",
-      description: "Loerm ispum dolor sit amet",
-      assignedTo: ["Benaya Imanuela", "Benaya"],
-      status: "to-do" as enumDeadline
-    },
-    {
-      title: "Card Title",
-      createdAt: "2021-10-10",
-      createdBy: "Benaya Imanuela",
-      dueDate: "2021-11-10",
-      description: "Loerm ispum dolor sit amet",
-      assignedTo: ["Benaya Imanuela", "Benaya"],
-      status: "to-do" as enumDeadline
-    },
-    {
-      title: "Card Title",
-      createdAt: "2021-10-10",
-      createdBy: "Benaya Imanuela",
-      dueDate: "2021-11-10",
-      description: "Loerm ispum dolor sit amet",
-      assignedTo: ["Benaya Imanuela", "Benaya"],
-      status: "to-do" as enumDeadline
-    }
-  ];
 
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
           <p className="font-primary font-bold text-vw-md">Select List</p>
-          <HiTrash className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer" />
-          <HiPlusCircle className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer" />
+          <HiTrash
+            className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
+            onClick={() =>
+              credentialsController.cardsCreate({
+                listId: list as string
+              })
+            }
+          />
+          <HiPlusCircle
+            className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
+            onClick={() =>
+              credentialsController.cardsCreate({
+                listId: list as string
+              })
+            }
+          />
         </div>
         <div className="flex items-center gap-[.5vw] font-secondary">
           <p className="font-secondary text-vw-md">
-            Hello,<span className="font-bold">{" " + uname + "!"}</span>
+            Hello,
+            <span className="font-bold">
+              {" " + credentialsController.accData?.username + "!"}
+            </span>
           </p>
         </div>
       </div>
@@ -99,14 +68,17 @@ const KanbanPage = () => {
           classNameInput="w-full"
         />
         <ButtonCustom
-          onClick={() => {}}
+          onClick={() => {
+            router.back();
+            credentialsController.emptyAll();
+          }}
           text="Back"
           type="primary"
           classNameDiv="w-fit"
           classNameInput="w-full"
         />
         <ButtonCustom
-          onClick={() => {}}
+          onClick={credentialsController.logoutAction}
           text="Logout"
           type="secondary"
           classNameDiv="w-fit"
@@ -129,19 +101,19 @@ const KanbanPage = () => {
               <div className="bg-darkGray w-full h-[.3vw]" />
             </div>
             <div className="flex flex-col gap-[1vw] overflow-y-scroll">
-              {lists
-                .filter((list) => list.status === prog)
-                .map((List, index) => (
+              {credentialsController.cardsData
+                .filter((card) => card.status === prog)
+                .map((crd, index) => (
                   <CardItem
                     key={index}
-                    title={List.title}
+                    title={crd.title}
                     onClick={() => {
-                      console.log("List: ", List.title);
+                      console.log("List: ", crd.title);
                     }}
-                    createdAt={List.createdAt}
+                    createdAt={crd.createdAt}
                     createdBy="Benaya Imanuela"
-                    dueDate={List.dueDate}
-                    description={List.description}
+                    dueDate={crd.dueDate}
+                    description={crd.description}
                     cardType="card"
                     width="grow"
                   />

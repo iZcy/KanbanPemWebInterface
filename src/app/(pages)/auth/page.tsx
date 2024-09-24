@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
@@ -27,7 +28,7 @@ const AuthPage = () => {
       >
         <div className="w-full flex items-center text-center mb-[1vw]">
           <p className="text-primary font-semibold text-darkGray w-full text-vw-lg">
-            FOYAA Kanban
+            Kanban FOYAA
             <span className="text-accentOrange font-bold">{" LOGIN"}</span>
           </p>
         </div>

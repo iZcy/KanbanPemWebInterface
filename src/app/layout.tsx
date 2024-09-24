@@ -18,7 +18,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "FOYAA Kanban",
+  title: "Kanban FOYAA",
   description: "Created by Fawwaz, Ovie, Yitzhak, Aurore, Abe"
 };
 

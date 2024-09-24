@@ -5,6 +5,7 @@ import { useToasterContext } from "./ToasterContext";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import apiRoute from "@/api/routes";
+import { enumDeadline } from "@/helper/typesEnums";
 
 interface AuthBody {
   email: string;
@@ -32,8 +33,18 @@ interface ListData {
   title: string;
   boardId: string;
   position: number;
-  createdBy: string;
   createdAt: string;
+}
+
+interface CardData {
+  _id: string;
+  title: string;
+  listId: string;
+  createdAt: string;
+  dueDate: string;
+  description: string;
+  assignedTo: string[];
+  status: enumDeadline;
 }
 
 interface CredentialsFlowController {
@@ -57,6 +68,12 @@ interface CredentialsFlowController {
     listId: string;
     boardId: string;
   }) => void;
+  cardsData: CardData[];
+  cardsFetch: ({ listId }: { listId: string }) => void;
+  cardsCreate: ({ listId }: { listId: string }) => void;
+  cardsUpdate: ({ cardId, data }: { cardId: string; data: CardData }) => void;
+  cardsDelete: ({ cardId, listId }: { cardId: string; listId: string }) => void;
+  emptyAll: () => void;
 }
 
 const CredentialsContext = createContext<CredentialsFlowController | undefined>(
@@ -74,6 +91,13 @@ export const CredentialsProvider = ({
   const [accData, setAccData] = useState<AccountData | null>(null);
   const [boardData, setBoardData] = useState<BoardData[]>([]);
   const [listsData, setListsData] = useState<ListData[]>([]);
+  const [cardsData, setCardsData] = useState<CardData[]>([]);
+
+  const emptyAll = () => {
+    setBoardData([]);
+    setListsData([]);
+    setCardsData([]);
+  };
 
   const roleAction = (): boolean => {
     axios
@@ -231,7 +255,7 @@ export const CredentialsProvider = ({
       })
       .then((res) => {
         const listsData = res.data.data as ListData[];
-        setBoardData(boardData);
+
         toasterController.callToast({
           message: "Sukses mengambil data list",
           type: "success"
@@ -360,6 +384,150 @@ export const CredentialsProvider = ({
       });
   };
 
+  const cardsFetch = ({ listId }: { listId: string }) => {
+    toasterController.callToast({
+      message: "Mengambil data card...",
+      type: "info"
+    });
+
+    axios
+      .get(apiRoute.cards.mainRoute + listId, {
+        withCredentials: true
+      })
+      .then((res) => {
+        console.log(res.data.data);
+        setCardsData(res.data.data as CardData[]);
+        toasterController.callToast({
+          message: "Sukses mengambil data card",
+          type: "success"
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error mengambil data card",
+          type: "error"
+        });
+      });
+  };
+
+  const cardsCreate = ({ listId }: { listId: string }) => {
+    toasterController.callToast({
+      message: "Membuat card...",
+      type: "info"
+    });
+
+    axios
+      .post(
+        apiRoute.cards.mainRoute + listId,
+        {
+          title: "New Card",
+          createdAt: new Date().toISOString(),
+          dueDate: new Date().toISOString(),
+          description: "New Card Description",
+          assignedTo: []
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses membuat card",
+          type: "success"
+        });
+        // refetch card data
+        cardsFetch({ listId });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error membuat card",
+          type: "error"
+        });
+      });
+  };
+
+  const cardsUpdate = ({
+    cardId,
+    data
+  }: {
+    cardId: string;
+    data: CardData;
+  }) => {
+    toasterController.callToast({
+      message: "Mengupdate card...",
+      type: "info"
+    });
+
+    axios
+      .put(
+        apiRoute.cards.mainRoute + cardId,
+        {
+          title: data.title,
+          dueDate: data.dueDate,
+          description: data.description,
+          assignedTo: data.assignedTo,
+          status: data.status
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses mengupdate card",
+          type: "success"
+        });
+
+        // refetch card data
+        cardsFetch({ listId: data.listId });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error mengupdate card",
+          type: "error"
+        });
+      });
+  };
+
+  const cardsDelete = ({
+    cardId,
+    listId
+  }: {
+    cardId: string;
+    listId: string;
+  }) => {
+    toasterController.callToast({
+      message: "Menghapus card...",
+      type: "info"
+    });
+
+    axios
+      .delete(apiRoute.cards.mainRoute + cardId, {
+        withCredentials: true
+      })
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses menghapus card",
+          type: "success"
+        });
+        // back to previous list
+        router.push("/" + listId);
+
+        // refetch card data
+        cardsFetch({ listId });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error menghapus card",
+          type: "error"
+        });
+      });
+  };
+
   const loginAction = (param: AuthBody) => {
     toasterController.callToast({
       message: "Mencoba login...",
@@ -414,6 +582,7 @@ export const CredentialsProvider = ({
       .then(() => {
         // delete user data
         setAccData(null);
+        emptyAll();
 
         // inform success
         toasterController.callToast({
@@ -453,7 +622,13 @@ export const CredentialsProvider = ({
         listsFetch,
         listsCreate,
         listsUpdate,
-        listsDelete
+        listsDelete,
+        cardsData,
+        cardsFetch,
+        cardsCreate,
+        cardsUpdate,
+        cardsDelete,
+        emptyAll
       }}
     >
       {children}

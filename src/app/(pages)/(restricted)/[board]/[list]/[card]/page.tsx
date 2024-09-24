@@ -116,7 +116,9 @@ const CardPage = () => {
           </p>
           <div className="w-full flex text-darkGray text-vw-xs gap-[.5vw]">
             {contributorList.map((cont, idx) => (
-              <p>{cont + (idx + 1 < contributorList.length ? "," : "")}</p>
+              <p key={idx}>
+                {cont + (idx + 1 < contributorList.length ? "," : "")}
+              </p>
             ))}
           </div>
           <ButtonCustom

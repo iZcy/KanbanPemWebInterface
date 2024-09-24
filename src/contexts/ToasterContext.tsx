@@ -34,7 +34,9 @@ export const ToasterProvider = ({
 }) => {
   // Toast Handlers
   const callToast = (props: CustomToastProps) => {
-    toast(<CustomToast message={props.message} type={props.type} />);
+    if (toast) {
+      toast(<CustomToast message={props.message} type={props.type} />);
+    }
   };
 
   const dismissToast = () => {
