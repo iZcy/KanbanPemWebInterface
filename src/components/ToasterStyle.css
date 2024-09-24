@@ -1,0 +1,37 @@
+.custom-toast-container {
+  z-index: 9999; /* Ensure it appears above other elements */
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* If mobile, set height */
+@media (max-width: 1024px) {
+  .custom-toast-container {
+    width: 100vw;
+  }
+}
+
+.custom-toast.Toastify__toast {
+  background-color: transparent !important;
+  color: transparent !important;
+  width: fit-content !important;
+  height: fit-content !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+.custom-toast .Toastify__toast-icon {
+  color: #ff9000 !important; /* Example icon color */
+}
+
+.custom-toast .Toastify__progress-bar {
+  background: #ff9000 !important;
+}
+
+.custom-toast .Toastify__close-button {
+  display: none !important; /* Hide the close button */
+}
