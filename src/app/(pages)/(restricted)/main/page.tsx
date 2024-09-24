@@ -76,6 +76,7 @@ const BoardPage = () => {
             description={board.description}
             visibility={board.visibility as enumVisibility}
             onClick={() => {
+              credentialsController.setLookingBoard(board);
               router.push("/" + board._id);
             }}
             cardType="board"

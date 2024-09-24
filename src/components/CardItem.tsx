@@ -8,7 +8,6 @@ interface CardItemProps {
   description?: string;
   visibility?: enumVisibility;
   onClick: MouseEventHandler<HTMLDivElement>;
-  createdBy?: string;
   createdAt?: string;
   dueDate?: string;
   cardType: "board" | "list" | "card";
@@ -20,7 +19,6 @@ const CardItem = ({
   description,
   visibility,
   onClick,
-  createdBy = "",
   createdAt = "",
   cardType,
   dueDate = "",
@@ -66,12 +64,6 @@ const CardItem = ({
             <p className="font-secondary text-vw-xs text-start">{dueDate}</p>
           )}
         </div>
-
-        {["list", "card"].includes(cardType) && (
-          <p className="font-secondary text-vw-xs text-justify font-bold">
-            {"created by: " + createdBy}
-          </p>
-        )}
       </div>
       {cardType === "board" && (
         <div

@@ -14,6 +14,7 @@ interface AuthBody {
 }
 
 interface AccountData {
+  _id: string;
   email: string;
   username: string;
   role: "guest" | "member" | "admin";
@@ -47,32 +48,56 @@ interface CardData {
   status: enumDeadline;
 }
 
+interface CommentsData {
+  _id: string;
+  cardId: string;
+  userId: string;
+  content: string;
+  isEdited: boolean;
+}
 interface CredentialsFlowController {
   loginAction: (param: AuthBody) => void;
   logoutAction: () => void;
   roleAction: () => boolean;
   accData: AccountData | null;
   boardData: BoardData[];
+  lookingBoard: BoardData | null;
+  setLookingBoard: React.Dispatch<React.SetStateAction<BoardData | null>>;
   boardFetch: () => void;
   boardCreate: () => void;
   boardUpdate: (data: BoardData) => void;
   boardDelete: ({ boardId }: { boardId: string }) => void;
   listsData: ListData[];
+  lookingList: ListData | null;
+  setLookingList: React.Dispatch<React.SetStateAction<ListData | null>>;
   listsFetch: ({ boardId }: { boardId: string }) => void;
   listsCreate: ({ boardId }: { boardId: string }) => void;
   listsUpdate: ({ listId, data }: { listId: string; data: ListData }) => void;
-  listsDelete: ({
-    listId,
-    boardId
-  }: {
-    listId: string;
-    boardId: string;
-  }) => void;
+  listsDelete: ({ listId }: { listId: string }) => void;
   cardsData: CardData[];
+  lookingCard: CardData | null;
+  setLookingCard: React.Dispatch<React.SetStateAction<CardData | null>>;
   cardsFetch: ({ listId }: { listId: string }) => void;
   cardsCreate: ({ listId }: { listId: string }) => void;
   cardsUpdate: ({ cardId, data }: { cardId: string; data: CardData }) => void;
-  cardsDelete: ({ cardId, listId }: { cardId: string; listId: string }) => void;
+  cardsDelete: ({ cardId }: { cardId: string }) => void;
+  commentsData: CommentsData[];
+  commentsFetch: ({ cardId }: { cardId: string }) => void;
+  commentsCreate: ({
+    cardId,
+    content
+  }: {
+    cardId: string;
+    content: string;
+  }) => void;
+  commentsUpdate: ({
+    commentId,
+    data
+  }: {
+    commentId: string;
+    data: CommentsData;
+  }) => void;
+  commentsDelete: ({ commentId }: { commentId: string }) => void;
   emptyAll: () => void;
 }
 
@@ -92,11 +117,16 @@ export const CredentialsProvider = ({
   const [boardData, setBoardData] = useState<BoardData[]>([]);
   const [listsData, setListsData] = useState<ListData[]>([]);
   const [cardsData, setCardsData] = useState<CardData[]>([]);
+  const [commentsData, setCommentsData] = useState<CommentsData[]>([]);
+  const [lookingBoard, setLookingBoard] = useState<BoardData | null>(null);
+  const [lookingList, setLookingList] = useState<ListData | null>(null);
+  const [lookingCard, setLookingCard] = useState<CardData | null>(null);
 
   const emptyAll = () => {
     setBoardData([]);
     setListsData([]);
     setCardsData([]);
+    setCommentsData([]);
   };
 
   const roleAction = (): boolean => {
@@ -348,13 +378,7 @@ export const CredentialsProvider = ({
       });
   };
 
-  const listsDelete = ({
-    listId,
-    boardId
-  }: {
-    listId: string;
-    boardId: string;
-  }) => {
+  const listsDelete = ({ listId }: { listId: string }) => {
     toasterController.callToast({
       message: "Menghapus list...",
       type: "info"
@@ -370,10 +394,10 @@ export const CredentialsProvider = ({
           type: "success"
         });
         // redirect to previous board
-        router.push("/" + boardId);
+        router.push("/" + lookingBoard?._id);
 
         // refetch list data
-        listsFetch({ boardId });
+        listsFetch({ boardId: lookingBoard?._id || "" });
       })
       .catch((err) => {
         console.log(err);
@@ -492,13 +516,7 @@ export const CredentialsProvider = ({
       });
   };
 
-  const cardsDelete = ({
-    cardId,
-    listId
-  }: {
-    cardId: string;
-    listId: string;
-  }) => {
+  const cardsDelete = ({ cardId }: { cardId: string }) => {
     toasterController.callToast({
       message: "Menghapus card...",
       type: "info"
@@ -514,15 +532,149 @@ export const CredentialsProvider = ({
           type: "success"
         });
         // back to previous list
-        router.push("/" + listId);
+        router.push("/" + lookingList?._id);
 
         // refetch card data
-        cardsFetch({ listId });
+        cardsFetch({ listId: lookingList?._id || "" });
       })
       .catch((err) => {
         console.log(err);
         toasterController.callToast({
           message: "Error menghapus card",
+          type: "error"
+        });
+      });
+  };
+
+  const commentsFetch = ({ cardId }: { cardId: string }) => {
+    toasterController.callToast({
+      message: "Mengambil data comment...",
+      type: "info"
+    });
+
+    axios
+      .get(apiRoute.comments.mainRoute + cardId, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setCommentsData(res.data.data as CommentsData[]);
+        toasterController.callToast({
+          message: "Sukses mengambil data comment",
+          type: "success"
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error mengambil data comment",
+          type: "error"
+        });
+      });
+  };
+
+  const commentsCreate = ({
+    cardId,
+    content
+  }: {
+    cardId: string;
+    content: string;
+  }) => {
+    toasterController.callToast({
+      message: "Membuat comment...",
+      type: "info"
+    });
+
+    axios
+      .post(
+        apiRoute.comments.mainRoute + cardId,
+        {
+          content: content,
+          userId: accData?._id
+        } as CommentsData,
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses membuat comment",
+          type: "success"
+        });
+        // refetch comment data
+        commentsFetch({ cardId });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error membuat comment",
+          type: "error"
+        });
+      });
+  };
+
+  const commentsUpdate = ({
+    commentId,
+    data
+  }: {
+    commentId: string;
+    data: CommentsData;
+  }) => {
+    toasterController.callToast({
+      message: "Mengupdate comment...",
+      type: "info"
+    });
+
+    axios
+      .put(
+        apiRoute.comments.mainRoute + commentId,
+        {
+          content: data.content,
+          isEdited: true
+        } as CommentsData,
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses mengupdate comment",
+          type: "success"
+        });
+
+        // refetch comment data
+        commentsFetch({ cardId: data.cardId });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error mengupdate comment",
+          type: "error"
+        });
+      });
+  };
+
+  const commentsDelete = ({ commentId }: { commentId: string }) => {
+    toasterController.callToast({
+      message: "Menghapus comment...",
+      type: "info"
+    });
+
+    axios
+      .delete(apiRoute.comments.mainRoute + commentId, {
+        withCredentials: true
+      })
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses menghapus comment",
+          type: "success"
+        });
+        // refetch comment data
+        commentsFetch({ cardId: lookingCard?._id || "" });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error menghapus comment",
           type: "error"
         });
       });
@@ -628,7 +780,18 @@ export const CredentialsProvider = ({
         cardsCreate,
         cardsUpdate,
         cardsDelete,
-        emptyAll
+        commentsData,
+        commentsFetch,
+        commentsCreate,
+        commentsUpdate,
+        commentsDelete,
+        emptyAll,
+        lookingBoard,
+        setLookingBoard,
+        lookingList,
+        setLookingList,
+        lookingCard,
+        setLookingCard
       }}
     >
       {children}

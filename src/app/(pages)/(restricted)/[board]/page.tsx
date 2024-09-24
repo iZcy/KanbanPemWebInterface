@@ -19,9 +19,7 @@ const ListPage = () => {
 
   const listFetchRef = useRef(credentialsController.listsFetch);
 
-  const selectedBoard = credentialsController.boardData.find(
-    (Board) => Board._id === board
-  );
+  const selectedBoard = credentialsController.lookingBoard;
 
   useEffect(() => {
     listFetchRef.current({
@@ -99,6 +97,7 @@ const ListPage = () => {
             key={index}
             title={list.title}
             onClick={() => {
+              credentialsController.setLookingList(list);
               // add route to list page
               router.push(`${board}/${list._id}`);
             }}
