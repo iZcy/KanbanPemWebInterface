@@ -1,8 +1,6 @@
 "use client";
 
 import ButtonCustom from "@/components/ButtonCustom";
-import InputCustom from "@/components/InputCustom";
-import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 const Participants = () => {

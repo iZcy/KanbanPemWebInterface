@@ -1,11 +1,11 @@
 // src/app/page.tsx
 "use client";
-import { useCredentialsContext } from "@/contexts/CredentialsContext";
-import { redirect } from "next/navigation";
+// import { useCredentialsContext } from "@/contexts/CredentialsContext";
+// import { redirect } from "next/navigation";
 
 export default function Home() {
   // Logic to determine whether to redirect
-  const credentialsController = useCredentialsContext();
+  // const credentialsController = useCredentialsContext();
 
   // const creds = credentialsController.roleAction();
   // console.log(creds);
