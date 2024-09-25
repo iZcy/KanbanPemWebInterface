@@ -1,4 +1,4 @@
-const mainRoute = "http://localhost:3500/";
+const mainRoute = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3500/";
 const authRoute = mainRoute + "auth/";
 const authLoginRoute = authRoute + "login/";
 const authLogoutRoute = authRoute + "logout/";
