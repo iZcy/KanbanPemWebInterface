@@ -4,10 +4,9 @@ import ButtonCustom from "@/components/ButtonCustom";
 import CardItem from "@/components/CardItem";
 import SearchBar from "@/components/SearchBar";
 import CreateBoardModal from "@/components/CreateBoardModal";
-import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { useCredentialsContext, BoardData } from "@/contexts/CredentialsContext";
 import { enumVisibility } from "@/helper/typesEnums";
 import { useRouter } from "next/navigation";
-
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle } from "react-icons/hi";
 
@@ -17,6 +16,7 @@ const BoardPage = () => {
 
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [boards, setBoards] = useState<BoardData[]>([]);
 
   const boardFetchRef = useRef(credentialsController.boardFetch);
 
@@ -24,9 +24,29 @@ const BoardPage = () => {
     boardFetchRef.current();
   }, []);
 
+  useEffect(() => {
+    setBoards(credentialsController.boardData);
+  }, [credentialsController.boardData]);
+
   const handleCreateBoard = async (title: string, description: string, visibility: "private" | "public") => {
-    await credentialsController.boardCreate({ title, description, visibility });
+    const newBoard = await credentialsController.boardCreate({ title, description, visibility });
+    if (newBoard) {
+      setBoards(prevBoards => [...prevBoards, newBoard]);
+    }
     setIsModalOpen(false);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearch(query);
+    if (query) {
+      const filteredBoards = credentialsController.boardData.filter((board) =>
+        board.title.toLowerCase().includes(query.toLowerCase())
+      );
+      setBoards(filteredBoards);
+    } else {
+      setBoards(credentialsController.boardData);
+    }
   };
 
   return (
@@ -55,13 +75,13 @@ const BoardPage = () => {
             <SearchBar
               placeholder="Search board..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
               classNameDiv="w-full"
               classNameInput="w-full"
             />
           </div>
           <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw]">
-            {credentialsController.boardData.map((board, index) => (
+            {boards.map((board, index) => (
               <CardItem
                 key={index}
                 title={board.title}
@@ -88,4 +108,3 @@ const BoardPage = () => {
 };
 
 export default BoardPage;
-

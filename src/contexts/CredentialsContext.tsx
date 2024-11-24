@@ -20,7 +20,7 @@ interface AccountData {
   role: "guest" | "member" | "admin";
 }
 
-interface BoardData {
+export interface BoardData {
   _id: string;
   title: string;
   userId: string;
@@ -28,6 +28,7 @@ interface BoardData {
   visibility: "private" | "public";
   createdAt: string;
 }
+// export type { BoardData };
 
 interface ListData {
   _id: string;
@@ -64,7 +65,9 @@ interface CredentialsFlowController {
   lookingBoard: BoardData | null;
   setLookingBoard: React.Dispatch<React.SetStateAction<BoardData | null>>;
   boardFetch: () => void;
-  boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<void>;
+  boardSearch: (query: string) => void;
+  // boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<void>;
+  boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<BoardData | undefined>;
   boardUpdate: (data: BoardData) => void;
   boardDelete: ({ boardId }: { boardId: string }) => void;
   listsData: ListData[];
@@ -171,8 +174,11 @@ export const CredentialsProvider = ({
         });
       });
   };
-  
-  const boardCreate = async (data: { title: string; description: string; visibility: "private" | "public" }) => {
+  const boardCreate = async (data: { 
+    title: string; 
+    description: string; 
+    visibility: "private" | "public" 
+  }): Promise<BoardData | undefined> => {
     toasterController.callToast({
       message: "Membuat board...",
       type: "info"
@@ -192,12 +198,13 @@ export const CredentialsProvider = ({
       );
   
       if (response.status === 200) {
+        const newBoard = response.data;
         toasterController.callToast({
           message: "Sukses membuat board",
           type: "success"
         });
-        // refetch board data
         boardFetch();
+        return newBoard;
       }
     } catch (err) {
       console.log(err);
@@ -206,8 +213,41 @@ export const CredentialsProvider = ({
         type: "error"
       });
     }
+    return undefined;
   };
 
+  const boardSearch = (query: string) => {
+    if (!query) {
+      // If the query is empty, fetch all boards
+      boardFetch();
+      return;
+    }
+  
+    toasterController.callToast({
+      message: "Mencari board...",
+      type: "info"
+    });
+  
+    axios
+      .get(`${apiRoute.board.mainRoute}?search=${query}`, {
+        withCredentials: true
+      })
+      .then((res) => {
+        const boardData = res.data.data as BoardData[];
+        setBoardData(boardData);
+        toasterController.callToast({
+          message: "Sukses mencari board",
+          type: "success"
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error mencari board",
+          type: "error"
+        });
+      });
+  };
 
   const boardDelete = ({ boardId }: { boardId: string }) => {
     toasterController.callToast({
@@ -763,6 +803,7 @@ export const CredentialsProvider = ({
   return (
     <CredentialsContext.Provider
       value={{
+        boardSearch,
         loginAction,
         logoutAction,
         roleAction,
