@@ -223,7 +223,7 @@ export const CredentialsProvider = ({
           type: "success"
         });
         // move to main page
-        router.push("/main");
+        router.push("/");
 
         // refetch board data
         boardFetch();
@@ -706,7 +706,7 @@ export const CredentialsProvider = ({
             "Sukses: " + (res?.data?.data || "(pesan hilang, hubungi Admin!)"),
           type: "success"
         });
-        router.push("/main");
+        router.push("/");
       })
       .catch((err) => {
         console.log(err);

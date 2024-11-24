@@ -4,7 +4,7 @@ import { Roboto, Montserrat } from "next/font/google";
 
 import "react-toastify/ReactToastify.min.css";
 import { ToasterProvider } from "@/contexts/ToasterContext";
-import ToastProvider from "@/components/ToastProvider";
+import ToastProvider from "@/components/Toaster/ToastProvider";
 import { CredentialsProvider } from "@/contexts/CredentialsContext";
 
 const roboto = Roboto({

@@ -1,25 +1,44 @@
-// src/app/page.tsx
-import apiRoute from '@/api/routes';
-import { redirect } from 'next/navigation';
+"use client"; // This makes the component client-side
 
-// Mark this function as async
-export default async function Home() {
-  // Fetch data server-side
-  const response = await fetch(apiRoute.auth.roleRoute, {
-    method: 'GET',
-    cache: 'no-store' // Optional: Avoid using cached data
-  });
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import apiRoute from "@/api/routes";
+import BoardPage from "@/components/Pages/Main/MainPage";
+import LoadingSpinner from "@/components/Loading";
 
-  // If the response is not ok, trigger a server-side redirect
-  if (!response.ok) {
-    redirect('/auth'); // Server-side redirect
+export default function Home() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Perform client-side fetch for authentication check
+    const checkAuth = async () => {
+      try {
+        const res = await fetch(apiRoute.auth.roleRoute, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          // If authentication fails, redirect to /auth
+          router.replace("/auth");
+        } else {
+          setIsLoading(false); // Authentication successful, stop loading
+        }
+      } catch (error) {
+        console.error("Failed to fetch authentication status:", error);
+        router.replace("/auth");
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  if (isLoading) {
+    // Optionally, show a loading indicator while checking auth
+    return <LoadingSpinner />;
   }
 
-  // If everything is okay, proceed to render the page
-  return (
-    <div>
-      <h1>Welcome to the homepage</h1>
-      <p>If you see this, redirection did not occur.</p>
-    </div>
-  );
+  // Render the main page if authentication succeeds
+  return <BoardPage />;
 }

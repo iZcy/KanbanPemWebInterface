@@ -16,7 +16,7 @@ const AuthPage = () => {
   const [disabled, setDisabled] = useState(false);
   const credentialsController = useCredentialsContext();
 
-  if (credentialsController.accData) router.push("/main");
+  if (credentialsController.accData) router.push("/");
 
   return (
     <div className="w-full h-full flex items-center justify-center">

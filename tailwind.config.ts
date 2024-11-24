@@ -11,7 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)"
-      }
+      },
+      animation: {
+        bounce: "bounce 1s infinite",
+        "bounce-delay-200": "bounce 1s infinite 0.2s",
+        "bounce-delay-400": "bounce 1s infinite 0.4s",
+      },
     },
     fontFamily: {
       primary: ["Roboto", "sans-serif"],
