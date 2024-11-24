@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useSearchContext } from "@/contexts/SearchContext";
 
-const SearchAndLog = () => {
+const SearchAndLog = ({placeholder}: {placeholder: string}) => {
   const router = useRouter();
   const credentialsController = useCredentialsContext();
   const searchController = useSearchContext();
@@ -13,7 +13,7 @@ const SearchAndLog = () => {
     <>
       <div className="flex items-center justify-center gap-[1vw]">
         <SearchBar
-          placeholder="Search list..."
+          placeholder={placeholder}
           value={searchController.search}
           onChange={(e) => {
             e.preventDefault();

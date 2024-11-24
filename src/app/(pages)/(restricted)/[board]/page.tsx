@@ -1,8 +1,7 @@
 "use client";
 
-import ButtonCustom from "@/components/ButtonCustom";
 import CardItem from "@/components/CardItem";
-import SearchBar from "@/components/SearchBar";
+import SearchAndLog from "@/components/SearchAndLog";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +12,6 @@ const ListPage = () => {
   const { board } = useParams();
   const credentialsController = useCredentialsContext();
 
-  const [search, setSearch] = useState("");
   const listFetchRef = useRef(credentialsController.listsFetch);
 
   const selectedBoard = credentialsController.lookingBoard;
@@ -127,32 +125,7 @@ const ListPage = () => {
           </p>
         )}
       </div>
-      <div className="flex items-center justify-center gap-[1vw]">
-        <SearchBar
-          placeholder="Search list..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          classNameDiv="w-full"
-          classNameInput="w-full"
-        />
-        <ButtonCustom
-          onClick={() => {
-            credentialsController.emptyAll();
-            router.back();
-          }}
-          text="Back"
-          type="primary"
-          classNameDiv="w-fit"
-          classNameInput="w-full"
-        />
-        <ButtonCustom
-          onClick={credentialsController.logoutAction}
-          text="Logout"
-          type="secondary"
-          classNameDiv="w-fit"
-          classNameInput="w-full"
-        />
-      </div>
+      <SearchAndLog placeholder="Search list..." />
       <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw]">
         {credentialsController.listsData.map((list, index) => (
           <CardItem

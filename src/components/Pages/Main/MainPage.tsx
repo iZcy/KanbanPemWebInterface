@@ -1,20 +1,18 @@
 "use client";
 
-import ButtonCustom from "@/components/ButtonCustom";
 import CardItem from "@/components/CardItem";
-import SearchBar from "@/components/SearchBar";
 import CreateBoardModal from "@/components/CreateBoardModal";
 import { useCredentialsContext, BoardData } from "@/contexts/CredentialsContext";
 import { enumVisibility } from "@/helper/typesEnums";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle } from "react-icons/hi";
+import SearchAndLog from "@/components/SearchAndLog";
 
 const BoardPage = () => {
   const router = useRouter();
   const credentialsController = useCredentialsContext();
 
-  const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [boards, setBoards] = useState<BoardData[]>([]);
 
@@ -34,19 +32,6 @@ const BoardPage = () => {
       setBoards(prevBoards => [...prevBoards, newBoard]);
     }
     setIsModalOpen(false);
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearch(query);
-    if (query) {
-      const filteredBoards = credentialsController.boardData.filter((board) =>
-        board.title.toLowerCase().includes(query.toLowerCase())
-      );
-      setBoards(filteredBoards);
-    } else {
-      setBoards(credentialsController.boardData);
-    }
   };
 
   return (
@@ -71,15 +56,9 @@ const BoardPage = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center justify-center gap-[1vw]">
-            <SearchBar
+          <SearchAndLog
               placeholder="Search board..."
-              value={search}
-              onChange={handleSearchChange}
-              classNameDiv="w-full"
-              classNameInput="w-full"
             />
-          </div>
           <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw]">
             {boards.map((board, index) => (
               <CardItem
