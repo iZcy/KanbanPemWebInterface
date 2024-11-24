@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Roboto, Montserrat } from "@next/font/google";
+import { Roboto, Montserrat } from "next/font/google";
 
 import "react-toastify/ReactToastify.min.css";
 import { ToasterProvider } from "@/contexts/ToasterContext";
