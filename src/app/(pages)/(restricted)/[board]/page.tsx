@@ -10,25 +10,51 @@ import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const ListPage = () => {
   const router = useRouter();
-
   const { board } = useParams();
-
   const credentialsController = useCredentialsContext();
 
   const [search, setSearch] = useState("");
-
   const listFetchRef = useRef(credentialsController.listsFetch);
 
   const selectedBoard = credentialsController.lookingBoard;
 
   useEffect(() => {
     listFetchRef.current({
-      boardId: board as string
+      boardId: board as string,
     });
   }, [board]);
 
   const [titleEditMode, setTitleEditMode] = useState(false);
   const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
+
+  const [descriptionEditMode, setDescriptionEditMode] = useState(false);
+  const [presentDescription, setPresentDescription] = useState(selectedBoard?.description);
+
+  const handleTitleUpdate = () => {
+    setTitleEditMode(false);
+    const currentData = credentialsController.lookingBoard;
+    credentialsController.boardUpdate({
+      title: presentTitle || "",
+      _id: currentData?._id || "",
+      description: currentData?.description || "",
+      visibility: currentData?.visibility || "private",
+      createdAt: currentData?.createdAt || "",
+      userId: currentData?.userId || "",
+    });
+  };
+
+  const handleDescriptionUpdate = () => {
+    setDescriptionEditMode(false);
+    const currentData = credentialsController.lookingBoard;
+    credentialsController.boardUpdate({
+      title: currentData?.title || "",
+      _id: currentData?._id || "",
+      description: presentDescription || "",
+      visibility: currentData?.visibility || "private",
+      createdAt: currentData?.createdAt || "",
+      userId: currentData?.userId || "",
+    });
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
@@ -38,31 +64,19 @@ const ListPage = () => {
             <input
               type="text"
               value={presentTitle}
-              onChange={(e) => {
-                e.preventDefault();
-                setPresentTitle(e.target.value);
-              }}
-              onBlur={() => {
-                setTitleEditMode(false);
-
-                const currentData = credentialsController.lookingBoard;
-                credentialsController.boardUpdate({
-                  title: presentTitle || "",
-                  _id: currentData?._id || "",
-                  description: currentData?.description || "",
-                  visibility: currentData?.visibility || "private",
-                  createdAt: currentData?.createdAt || "",
-                  userId: currentData?.userId || ""
-                });
+              onChange={(e) => setPresentTitle(e.target.value)}
+              onBlur={handleTitleUpdate}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleTitleUpdate();
+                }
               }}
               className="font-primary font-bold text-vw-md"
             />
           ) : (
             <p
               className="font-primary font-bold text-vw-md cursor-pointer"
-              onClick={() => {
-                setTitleEditMode(true);
-              }}
+              onClick={() => setTitleEditMode(true)}
             >
               {presentTitle}
             </p>
@@ -91,18 +105,33 @@ const ListPage = () => {
         </div>
       </div>
       <div className="flex items-center gap-[.5vw] font-secondary">
-        <p className="font-secondary text-vw-xs text-darkGray font-bold">
-          {selectedBoard?.description}
-        </p>
+        {descriptionEditMode ? (
+          <input
+            type="text"
+            value={presentDescription}
+            onChange={(e) => setPresentDescription(e.target.value)}
+            onBlur={handleDescriptionUpdate}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleDescriptionUpdate();
+              }
+            }}
+            className="font-secondary text-vw-xs text-darkGray font-bold"
+          />
+        ) : (
+          <p
+            className="font-secondary text-vw-xs text-darkGray font-bold cursor-pointer"
+            onClick={() => setDescriptionEditMode(true)}
+          >
+            {presentDescription || "Click to add description"}
+          </p>
+        )}
       </div>
       <div className="flex items-center justify-center gap-[1vw]">
         <SearchBar
           placeholder="Search list..."
           value={search}
-          onChange={(e) => {
-            e.preventDefault();
-            setSearch(e.target.value);
-          }}
+          onChange={(e) => setSearch(e.target.value)}
           classNameDiv="w-full"
           classNameInput="w-full"
         />
@@ -131,11 +160,9 @@ const ListPage = () => {
             title={list.title}
             onClick={() => {
               credentialsController.setLookingList(list);
-              // add route to list page
               router.push(`${board}/${list._id}`);
             }}
             createdAt={list.createdAt}
-            // createdBy={List.createdBy}
             cardType="list"
           />
         ))}
