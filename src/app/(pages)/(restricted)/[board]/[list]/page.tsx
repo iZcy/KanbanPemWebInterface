@@ -35,6 +35,7 @@ const KanbanPage = () => {
           <p className="font-primary font-bold text-vw-md">
             {selectedBoard?.title + " / " + selectedList?.title}
           </p>
+        
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
             onClick={() =>
