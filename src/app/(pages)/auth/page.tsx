@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
@@ -16,8 +16,12 @@ const AuthPage = () => {
   const [disabled, setDisabled] = useState(false);
   const credentialsController = useCredentialsContext();
 
-  if (credentialsController.accData) router.push("/");
-
+  useEffect(() => {
+    if (credentialsController.accData) {
+      router.push("/");
+    }
+  }, [credentialsController.accData, router]);
+  
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div

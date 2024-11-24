@@ -13,7 +13,7 @@ interface AuthBody {
   setDisabled: (value: boolean) => void;
 }
 
-interface AccountData {
+export interface AccountData {
   _id: string;
   email: string;
   username: string;
@@ -61,6 +61,7 @@ interface CredentialsFlowController {
   logoutAction: () => void;
   roleAction: () => boolean;
   accData: AccountData | null;
+  setAccData: (data: AccountData | null) => void;
   boardData: BoardData[];
   lookingBoard: BoardData | null;
   setLookingBoard: React.Dispatch<React.SetStateAction<BoardData | null>>;
@@ -808,6 +809,7 @@ export const CredentialsProvider = ({
         logoutAction,
         roleAction,
         accData,
+        setAccData,
         boardData,
         boardFetch,
         boardCreate,
