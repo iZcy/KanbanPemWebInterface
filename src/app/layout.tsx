@@ -6,6 +6,7 @@ import "react-toastify/ReactToastify.min.css";
 import { ToasterProvider } from "@/contexts/ToasterContext";
 import ToastProvider from "@/components/Toaster/ToastProvider";
 import { CredentialsProvider } from "@/contexts/CredentialsContext";
+import LoadingShell from "@/components/Shell/LoadingShell";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -35,7 +36,9 @@ export default function RootLayout({
         <ToasterProvider>
           <CredentialsProvider>
             <ToastProvider />
-            {children}
+            <LoadingShell>
+              {children}
+            </LoadingShell>
           </CredentialsProvider>
         </ToasterProvider>
       </body>
