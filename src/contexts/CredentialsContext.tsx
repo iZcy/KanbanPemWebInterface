@@ -64,7 +64,7 @@ interface CredentialsFlowController {
   lookingBoard: BoardData | null;
   setLookingBoard: React.Dispatch<React.SetStateAction<BoardData | null>>;
   boardFetch: () => void;
-  boardCreate: () => void;
+  boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<void>;
   boardUpdate: (data: BoardData) => void;
   boardDelete: ({ boardId }: { boardId: string }) => void;
   listsData: ListData[];
@@ -171,41 +171,43 @@ export const CredentialsProvider = ({
         });
       });
   };
-
-  const boardCreate = () => {
+  
+  const boardCreate = async (data: { title: string; description: string; visibility: "private" | "public" }) => {
     toasterController.callToast({
       message: "Membuat board...",
       type: "info"
     });
-
-    axios
-      .post(
+  
+    try {
+      const response = await axios.post(
         apiRoute.board.mainRoute,
         {
-          title: "New Board",
-          description: "New Board Description",
-          visibility: "private"
+          title: data.title,
+          description: data.description,
+          visibility: data.visibility
         },
         {
           withCredentials: true
         }
-      )
-      .then(() => {
+      );
+  
+      if (response.status === 200) {
         toasterController.callToast({
           message: "Sukses membuat board",
           type: "success"
         });
         // refetch board data
         boardFetch();
-      })
-      .catch((err) => {
-        console.log(err);
-        toasterController.callToast({
-          message: "Error membuat board",
-          type: "error"
-        });
+      }
+    } catch (err) {
+      console.log(err);
+      toasterController.callToast({
+        message: "Error membuat board",
+        type: "error"
       });
+    }
   };
+
 
   const boardDelete = ({ boardId }: { boardId: string }) => {
     toasterController.callToast({
