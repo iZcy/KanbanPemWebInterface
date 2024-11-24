@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ---
 ## Overview
-KanbanPemWebInterface is a backend project designed to manage tasks in a Kanban-style project management system. This API supports task creation, updating, and status tracking, and is suitable for integration with frontend applications.
+KanbanPemWebInterface is an interface designed to manage tasks in a Kanban-style project management system. This API supports task creation, updating, and status tracking, and is suitable for integration with frontend applications.
 
 ## Getting Started
 
