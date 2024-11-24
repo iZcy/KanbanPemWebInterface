@@ -7,6 +7,7 @@ import { ToasterProvider } from "@/contexts/ToasterContext";
 import ToastProvider from "@/components/Toaster/ToastProvider";
 import { CredentialsProvider } from "@/contexts/CredentialsContext";
 import LoadingShell from "@/components/Shell/LoadingShell";
+import { SearchProvider } from "@/contexts/SearchContext";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -37,7 +38,9 @@ export default function RootLayout({
           <CredentialsProvider>
             <ToastProvider />
             <LoadingShell>
-              {children}
+              <SearchProvider>
+                {children}
+              </SearchProvider>
             </LoadingShell>
           </CredentialsProvider>
         </ToasterProvider>

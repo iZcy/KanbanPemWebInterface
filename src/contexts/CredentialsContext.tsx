@@ -462,7 +462,6 @@ export const CredentialsProvider = ({
         withCredentials: true
       })
       .then((res) => {
-        console.log(res.data.data);
         setCardsData(res.data.data as CardData[]);
         toasterController.callToast({
           message: "Sukses mengambil data card",

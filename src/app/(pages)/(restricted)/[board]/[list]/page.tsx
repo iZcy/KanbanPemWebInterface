@@ -125,35 +125,7 @@ const KanbanPage = () => {
           </p>
         </div>
       </div>
-      <div className="flex items-center justify-center gap-[1vw]">
-        <SearchBar
-          placeholder="Search list..."
-          value={search}
-          onChange={(e) => {
-            e.preventDefault();
-            setSearch(e.target.value);
-          }}
-          classNameDiv="w-full"
-          classNameInput="w-full"
-        />
-        <ButtonCustom
-          onClick={() => {
-            router.back();
-            credentialsController.emptyAll();
-          }}
-          text="Back"
-          type="primary"
-          classNameDiv="w-fit"
-          classNameInput="w-full"
-        />
-        <ButtonCustom
-          onClick={credentialsController.logoutAction}
-          text="Logout"
-          type="secondary"
-          classNameDiv="w-fit"
-          classNameInput="w-full"
-        />
-      </div>
+      
       <div className="w-full h-[70vh] flex gap-[1vw]">
         {progressList.map((prog, idx) => (
           <div

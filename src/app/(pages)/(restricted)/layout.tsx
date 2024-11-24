@@ -22,18 +22,14 @@ const RootLayout = ({
       withCredentials: true
     }).then((res) => {
       const data = res.data.data as AccountData;
-
-      if (!data.role) {
-        router.replace("/auth");
-      }
-
-      credentialsController.setAccData(data);
+      console.log(data)
+      if (!data.role) router.replace("/auth");
+      else credentialsController.setAccData(data);
 
       setIsLoading(false);
     }).catch((error) => {
       console.error("Failed to fetch authentication status:", error);
       router.replace("/auth");
-      console.log("GK ada juga");
     }).finally(() => {
       setIsLoading(false); // Stop loading on
     });
