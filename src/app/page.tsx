@@ -1,18 +1,21 @@
 // src/app/page.tsx
-"use client";
-// import { useCredentialsContext } from "@/contexts/CredentialsContext";
-// import { redirect } from "next/navigation";
+import apiRoute from '@/api/routes';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  // Logic to determine whether to redirect
-  // const credentialsController = useCredentialsContext();
+// Mark this function as async
+export default async function Home() {
+  // Fetch data server-side
+  const response = await fetch(apiRoute.auth.roleRoute, {
+    method: 'GET',
+    cache: 'no-store' // Optional: Avoid using cached data
+  });
 
-  // const creds = credentialsController.roleAction();
-  // console.log(creds);
-  // if (!credentialsController.roleAction()) {
-  //   redirect("/auth"); // Redirects to another route
-  // }
+  // If the response is not ok, trigger a server-side redirect
+  if (!response.ok) {
+    redirect('/auth'); // Server-side redirect
+  }
 
+  // If everything is okay, proceed to render the page
   return (
     <div>
       <h1>Welcome to the homepage</h1>
