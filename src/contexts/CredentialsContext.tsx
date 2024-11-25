@@ -52,7 +52,8 @@ interface CardData {
 interface CommentsData {
   _id: string;
   cardId: string;
-  userId: string;
+  // userId: string;
+  userId: { username: string } | string | null;
   content: string;
   isEdited: boolean;
 }
@@ -631,7 +632,7 @@ export const CredentialsProvider = ({
         apiRoute.comments.mainRoute + cardId,
         {
           content: content,
-          userId: accData?._id
+          // userId: accData?._id
         } as CommentsData,
         {
           withCredentials: true
