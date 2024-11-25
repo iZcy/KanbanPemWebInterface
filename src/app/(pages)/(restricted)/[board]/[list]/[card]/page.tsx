@@ -30,14 +30,65 @@ const CardPage = () => {
   const valCreated = selectedCard?.createdAt;
   const valDue = selectedCard?.dueDate;
 
+  const [isEditing, setIsEditing] = useState(false); // State untuk mode edit
+  const [newTitle, setNewTitle] = useState(selectedCard?.title || "");
+
+  const [descriptionEditMode, setDescriptionEditMode] = useState(false);
+  const [presentDescription, setPresentDescription] = useState(selectedCard?.description);
+
+
+  const handleTitleUpdate = () => {
+    setIsEditing(false);
+    selectedCard!.title = newTitle;
+    credentialsController.cardsUpdate({
+      cardId: selectedCard!._id,
+      data: selectedCard!
+    });
+  };
+
+  const handleDescriptionUpdate = () => {
+    setDescriptionEditMode(false);
+    selectedCard!.description = presentDescription!;
+    credentialsController.cardsUpdate({
+      cardId: selectedCard!._id,
+      data: selectedCard!
+    });
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw] ">
       <div className="flex flex-col">
         <div className="flex items-center">
           <div className="flex items-center gap-[.5vw] grow text-darkGray">
-            <p className="font-primary font-bold text-vw-md">
+          {isEditing ? (
+            <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onBlur={handleTitleUpdate}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleTitleUpdate();
+              }
+            }}
+            className="font-primary font-bold text-vw-md"
+          />
+              // <InputCustom
+              //   value={newTitle}
+              //   onChange={(e) => setNewTitle(e.target.value)}
+              //   onKeyDown={(e) => {
+              //     if (e.key === "Enter") {
+              //       handleTitleUpdate();
+              //     }
+              //   }}
+              //   classNameDiv="w-full"
+              //   classNameInput="w-full border-darkGray"
+              // />
+            ) : (
+            <p className="font-primary font-bold text-vw-md" onClick={() => setIsEditing(true)}>
               {selectedCard?.title}
             </p>
+            )}  
           </div>
           <div className="flex gap-[.5vw]">
             <ButtonCustom
@@ -68,9 +119,27 @@ const CardPage = () => {
             <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
               Description
             </p>
-            <p className="font-secondary text-vw-xs text-darkGray w-full text-justify">
-              {selectedCard?.description}
-            </p>
+            {descriptionEditMode ? (
+              <textarea
+                onChange={(e) => setPresentDescription(e.target.value)}
+                onBlur={handleDescriptionUpdate}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleDescriptionUpdate();
+                  }
+                }}
+                rows={20}
+                className="font-secondary text-vw-xs text-darkGray font-bold w-full resize-none">
+                {presentDescription}
+              </textarea>
+            ) : (
+              <p
+                className="font-secondary text-vw-xs text-darkGray w-full text-justify"
+                onClick={() => setDescriptionEditMode(true)}
+              >
+                {presentDescription || "Click to add description"}
+              </p>
+            )}
           </div>
           <div className="w-6/12 h-full overflow-hidden flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] gap-[1vw] grow">
             <p className="font-secondary text-vw-sm font-bold text-darkGray w-full text-right">
