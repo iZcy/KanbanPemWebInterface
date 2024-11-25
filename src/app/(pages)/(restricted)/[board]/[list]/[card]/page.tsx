@@ -159,7 +159,10 @@ const CardPage = () => {
                   >
                     {isTheUser && <AiFillEdit className="text-darkGray" />}
                     <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
-                      {comment.userId + " "}
+                      {/* {comment.userId + " "} */}
+                      {typeof comment?.userId === "object" && comment?.userId != null
+                        ? comment?.userId?.username
+                        : "Anonymous" }{" "}
                       <span className="italic font-normal">
                         {comment.isEdited && " (edited)"}
                       </span>
@@ -186,7 +189,7 @@ const CardPage = () => {
             </div>
             <div className="w-full h-fit flex items-center rounded-[.6vw] gap-[1vw] align-bottom">
               <InputCustom
-                placeholder="Please type here..."
+                placeholder="Type your comment here..."
                 value={comment}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault();
@@ -196,7 +199,21 @@ const CardPage = () => {
                 classNameInput="w-full border-darkGray"
               />
               <ButtonCustom
-                onClick={() => {}}
+                onClick={() => {
+                  // Check if the comment is empty or not
+                  if (!comment.trim()) {
+                    alert("Comment can't be empty!");
+                    return;
+                  }
+                  
+                  // Use the commentsCreate function
+                  credentialsController.commentsCreate({
+                    cardId: card as string,
+                    content: comment
+                  });
+                  
+                  setComment("");
+                }}
                 text="Send"
                 type="primary"
                 classNameDiv="w-fit"
