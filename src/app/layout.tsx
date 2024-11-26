@@ -20,7 +20,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Kanban FOYAA",
+  title: "Kanban FORYA",
   description: "Created by Fawwaz, Ovie, Yitzhak, Aurore, Abe"
 };
 
@@ -38,9 +38,7 @@ export default function RootLayout({
           <CredentialsProvider>
             <ToastProvider />
             <LoadingShell>
-              <SearchProvider>
-                {children}
-              </SearchProvider>
+              <SearchProvider>{children}</SearchProvider>
             </LoadingShell>
           </CredentialsProvider>
         </ToasterProvider>

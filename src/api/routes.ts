@@ -4,6 +4,8 @@ const authLoginRoute = authRoute + "login/";
 const authRegisterRoute = authRoute + "register/";
 const authLogoutRoute = authRoute + "logout/";
 const authRoleRoute = authRoute + "role/";
+const authUserUpdate = authRoute + "update/";
+const authUserDelete = authRoute + "delete/";
 const boardRoute = mainRoute + "board/";
 const listsRoute = mainRoute + "lists/";
 const cardsRoute = mainRoute + "cards/";
@@ -15,6 +17,8 @@ const apiRoute = {
   auth: {
     mainRoute: authRoute,
     loginRoute: authLoginRoute,
+    updateRoute: authUserUpdate,
+    deleteRoute: authUserDelete,
     registerRoute: authRegisterRoute,
     logoutRoute: authLogoutRoute,
     roleRoute: authRoleRoute

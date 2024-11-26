@@ -33,6 +33,16 @@ const SearchAndLog = ({placeholder}: {placeholder: string}) => {
           classNameInput="w-full"
         />
         <ButtonCustom
+          onClick={() => {
+            router.push("/profile");
+            credentialsController.emptyAll();
+          }}
+          text="Account"
+          type="primary"
+          classNameDiv={"w-fit " + (!noBack && "hidden")}
+          classNameInput="w-full"
+        />
+        <ButtonCustom
           onClick={credentialsController.logoutAction}
           text="Logout"
           type="secondary"

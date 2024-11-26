@@ -1,9 +1,12 @@
 "use client";
 
 import ButtonCustom from "@/components/ButtonCustom";
+import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 
 const Participants = () => {
+  const router = useRouter();
+
   const participantList = [
     "Benaya Benaya",
     "Benaya Benaya",
@@ -39,7 +42,9 @@ const Participants = () => {
           </p>
           <ButtonCustom
             text="Back"
-            onClick={() => {}}
+            onClick={() => {
+              router.back();
+            }}
             classNameDiv="grow"
             classNameInput="w-full text-start"
             type="primary"

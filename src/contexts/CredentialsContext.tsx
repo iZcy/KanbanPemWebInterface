@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useContext, createContext, useState } from "react";
@@ -60,6 +59,29 @@ interface CommentsData {
 interface CredentialsFlowController {
   loginAction: (param: AuthBody) => void;
   logoutAction: () => void;
+  updateAccAction: ({
+    userId,
+    data,
+    setDisabled
+  }: {
+    userId: string;
+    data: RegData;
+    setDisabled: (val: boolean) => void;
+  }) => void;
+  registerAction: ({
+    reg,
+    setDisabled
+  }: {
+    reg: RegData;
+    setDisabled: (val: boolean) => void;
+  }) => void;
+  deleteAccAction: ({
+    userId,
+    setDisabled
+  }: {
+    userId: string;
+    setDisabled: (val: boolean) => void;
+  }) => void;
   roleAction: () => boolean;
   accData: AccountData | null;
   setAccData: (data: AccountData | null) => void;
@@ -69,7 +91,11 @@ interface CredentialsFlowController {
   boardFetch: () => void;
   boardSearch: (query: string) => void;
   // boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<void>;
-  boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<BoardData | undefined>;
+  boardCreate: (data: {
+    title: string;
+    description: string;
+    visibility: "private" | "public";
+  }) => Promise<BoardData | undefined>;
   boardUpdate: (data: BoardData) => void;
   boardDelete: ({ boardId }: { boardId: string }) => void;
   listsData: ListData[];
@@ -102,7 +128,13 @@ interface CredentialsFlowController {
     commentId: string;
     data: CommentsData;
   }) => void;
-  commentsDelete: ({ commentId }: { commentId: string }) => void;
+  commentsDelete: ({
+    commentId,
+    cardId
+  }: {
+    commentId: string;
+    cardId: string;
+  }) => void;
   emptyAll: () => void;
 }
 
@@ -176,16 +208,16 @@ export const CredentialsProvider = ({
         });
       });
   };
-  const boardCreate = async (data: { 
-    title: string; 
-    description: string; 
-    visibility: "private" | "public" 
+  const boardCreate = async (data: {
+    title: string;
+    description: string;
+    visibility: "private" | "public";
   }): Promise<BoardData | undefined> => {
     toasterController.callToast({
       message: "Membuat board...",
       type: "info"
     });
-  
+
     try {
       const response = await axios.post(
         apiRoute.board.mainRoute,
@@ -198,7 +230,7 @@ export const CredentialsProvider = ({
           withCredentials: true
         }
       );
-  
+
       if (response.status === 200) {
         const newBoard = response.data;
         toasterController.callToast({
@@ -224,12 +256,12 @@ export const CredentialsProvider = ({
       boardFetch();
       return;
     }
-  
+
     toasterController.callToast({
       message: "Mencari board...",
       type: "info"
     });
-  
+
     axios
       .get(`${apiRoute.board.mainRoute}?search=${query}`, {
         withCredentials: true
@@ -386,7 +418,7 @@ export const CredentialsProvider = ({
       message: "Mengupdate List...",
       type: "info"
     });
-  
+
     axios
       .patch(
         apiRoute.lists.mainRoute + data._id, // Endpoint backend
@@ -404,18 +436,21 @@ export const CredentialsProvider = ({
           message: "Sukses mengupdate List",
           type: "success"
         });
-  
+
         // Refetch list data untuk memastikan UI terupdate
         listsFetch({ boardId: data.boardId });
       })
       .catch((err) => {
-        console.error("Error updating list:", err.response?.data || err.message); // Log error
+        console.error(
+          "Error updating list:",
+          err.response?.data || err.message
+        ); // Log error
         toasterController.callToast({
           message: "Error mengupdate list",
           type: "error"
         });
       });
-  };  
+  };
 
   const listsDelete = ({ listId }: { listId: string }) => {
     toasterController.callToast({
@@ -691,7 +726,13 @@ export const CredentialsProvider = ({
       });
   };
 
-  const commentsDelete = ({ commentId }: { commentId: string }) => {
+  const commentsDelete = ({
+    commentId,
+    cardId
+  }: {
+    commentId: string;
+    cardId: string;
+  }) => {
     toasterController.callToast({
       message: "Menghapus comment...",
       type: "info"
@@ -796,12 +837,176 @@ export const CredentialsProvider = ({
       });
   };
 
+  const registerAction = ({
+    reg,
+    setDisabled
+  }: {
+    reg: RegData;
+    setDisabled: (val: boolean) => void;
+  }) => {
+    // Reject if password and confirm password is not the same
+    if (reg.password !== reg.confirmPassword) {
+      toasterController.callToast({
+        message: "Password dan Konfirmasi Password tidak sama",
+        type: "error"
+      });
+      return;
+    }
+
+    // inform loading
+    toasterController.callToast({
+      message: "Sedang memproses...",
+      type: "info"
+    });
+    setDisabled(true);
+
+    axios
+      .post(
+        apiRoute.auth.registerRoute,
+        {
+          email: reg.email,
+          password: reg.password,
+          username: reg.username,
+          role: reg.role
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        // inform success
+        toasterController.callToast({
+          message: "Berhasil mendaftar",
+          type: "success"
+        });
+
+        // redirect to home
+        router.push("/auth");
+      })
+      .catch((err) => {
+        // Inform
+        toasterController.callToast({
+          message: "Gagal mendaftar " + err?.response?.data?.message,
+          type: "error"
+        });
+        console.log(err);
+
+        setDisabled(false);
+      });
+  };
+
+  const updateAccAction = ({
+    userId,
+    data,
+    setDisabled
+  }: {
+    userId: string;
+    data: RegData;
+    setDisabled: (val: boolean) => void;
+  }) => {
+    // check if password and confirm password is the same
+    if (data.password !== data.confirmPassword) {
+      toasterController.callToast({
+        message: "Password dan Konfirmasi Password tidak sama",
+        type: "error"
+      });
+      return;
+    }
+
+    toasterController.callToast({
+      message: "Mengupdate data...",
+      type: "info"
+    });
+    setDisabled(true);
+
+    axios
+      .patch(
+        apiRoute.auth.updateRoute + userId,
+        {
+          email: data.email,
+          username: data.username,
+          role: data.role,
+          password: data.password
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses mengupdate data",
+          type: "success"
+        });
+
+        // Change the data
+        setAccData({
+          _id: userId,
+          email: data.email,
+          username: data.username,
+          role: data.role
+        });
+      })
+      .catch((err) => {
+        console.log(err.response);
+        toasterController.callToast({
+          message: "Error mengupdate data: " + err.response.data.data,
+          type: "error"
+        });
+
+        // Return previous value
+        setAccData(accData);
+      });
+
+    setDisabled(false);
+  };
+
+  const deleteAccAction = ({
+    userId,
+    setDisabled
+  }: {
+    userId: string;
+    setDisabled: (val: boolean) => void;
+  }) => {
+    toasterController.callToast({
+      message: "Menghapus akun...",
+      type: "info"
+    });
+    setDisabled(true);
+
+    axios
+      .delete(apiRoute.auth.deleteRoute + userId, {
+        withCredentials: true
+      })
+      .then(() => {
+        toasterController.callToast({
+          message: "Sukses menghapus akun",
+          type: "success"
+        });
+        // clear user data
+        setAccData(null);
+
+        // redirect to home
+        router.push("/auth");
+      })
+      .catch((err) => {
+        console.log(err);
+        toasterController.callToast({
+          message: "Error menghapus akun",
+          type: "error"
+        });
+        setDisabled(false);
+      });
+  };
+
   return (
     <CredentialsContext.Provider
       value={{
         boardSearch,
         loginAction,
         logoutAction,
+        registerAction,
+        updateAccAction,
+        deleteAccAction,
         roleAction,
         accData,
         setAccData,
