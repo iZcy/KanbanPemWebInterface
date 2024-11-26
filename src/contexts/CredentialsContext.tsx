@@ -533,7 +533,7 @@ export const CredentialsProvider = ({
           title: "New Card",
           createdAt: new Date().toISOString(),
           dueDate: new Date().toISOString(),
-          description: "New Card Description",
+          description: "Edit Card Description Here",
           assignedTo: []
         },
         {
