@@ -5,6 +5,7 @@ import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
 import Participants from "@/components/Pages/Popup/Participants";
 import {
+  CardData,
   ContributorData,
   useCredentialsContext
 } from "@/contexts/CredentialsContext";
@@ -44,13 +45,38 @@ const CardPage = () => {
     credentialsController.lookingBoard
   );
 
+  const [valCreated, setValCreated] = useState(selectedCard?.createdAt);
+  const [valDue, setValDue] = useState(selectedCard?.dueDate);
+  const [newTitle, setNewTitle] = useState(selectedCard?.title || "");
+  const [presentDescription, setPresentDescription] = useState(
+    selectedCard?.description
+  );
+  const [contributors, setContributors] = useState<ContributorData[]>(
+    selectedCard?.assignedTo || []
+  );
+  const [newDueDate, setNewDueDate] = useState(valDue?.split("T")[0] || "");
+
   useEffect(() => {
     axios
       .get(apiRoute.cards.singleRoute + card, {
         withCredentials: true
       })
       .then((res) => {
-        setSelectedCard(res.data.data);
+        const data = res.data.data as CardData;
+
+        setSelectedCard(data);
+
+        setValCreated(data.createdAt);
+
+        setValDue(data.dueDate);
+
+        setNewTitle(data.title);
+
+        setPresentDescription(data.description);
+
+        setContributors(data.assignedTo);
+
+        setNewDueDate(data.dueDate?.split("T")[0]);
       })
       .catch((err) => {
         console.log(err);
@@ -79,22 +105,11 @@ const CardPage = () => {
       });
   }, [params.list, params.board, card]);
 
-  const valCreated = selectedCard?.createdAt;
-  const valDue = selectedCard?.dueDate;
-
   const [isEditing, setIsEditing] = useState(false);
-  const [newTitle, setNewTitle] = useState(selectedCard?.title || "");
 
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);
-  const [presentDescription, setPresentDescription] = useState(
-    selectedCard?.description
-  );
-  const [contributors, setContributors] = useState<ContributorData[]>(
-    selectedCard?.assignedTo || []
-  );
 
   const [isEditingDeadline, setIsEditingDeadline] = useState(false);
-  const [newDueDate, setNewDueDate] = useState(valDue?.split("T")[0] || "");
 
   useEffect(() => {
     const fetchUsers = async () => {
