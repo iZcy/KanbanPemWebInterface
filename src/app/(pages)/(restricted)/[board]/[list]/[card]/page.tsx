@@ -157,7 +157,7 @@ const CardPage = () => {
                       (isTheUser ? "self-end" : "self-start")
                     }
                   >
-                    <div className="w-full flex justify-end items-center text-right -mb-5 text-[20px] gap-2">
+                    <div className="w-full flex justify-end items-center text-right text-[20px] -mb-5 gap-2">
                       {/* {isTheUser && <AiFillEdit className="text-darkGray justify-end items-end text-right" />} */}
                       {/* Edit Button */}
                       {/* <div className="">
@@ -174,7 +174,8 @@ const CardPage = () => {
                       </div> */}
 
                       {/* ChatGPT */}
-                      {isTheUser && (
+                      {/* {isTheUser && ( */}
+                      {(
                         <>
                           {/* Edit Button */}
                           <div className="cursor-pointer">
