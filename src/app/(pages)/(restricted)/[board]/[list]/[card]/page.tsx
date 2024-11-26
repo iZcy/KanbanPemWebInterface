@@ -9,7 +9,7 @@ import {
 } from "@/contexts/CredentialsContext";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 const CardPage = () => {
@@ -159,6 +159,54 @@ const CardPage = () => {
     });
   };
 
+  // const Comments = ({ comments, userId, onCommentUpdate, onCommentDelete }) => {
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null); // Track which comment is being edited
+  const [currentContent, setCurrentContent] = useState<string>(""); // Track the current content during editing
+
+  // }
+
+  // Local state for managing whether the comment is being edited
+  const [isCommentEditing, setIsCommentEditing] = useState(false);
+  const [updatedCommentContent, setUpdatedComentContent] = useState(comment.content);
+
+  const handleCommentEdit = (commentId: string, content: string) => {
+    setEditingCommentId(commentId);
+    setCurrentContent(content)
+  }
+
+  const handleCommentSave = (commentId: string) => {
+    if (!currentContent.trim()) {
+      alert("Comment content cannot be empty!");
+      return;
+    }
+    credentialsController.commentsUpdate({
+      commentId,
+      data: { 
+        // ...comment,
+        cardId: card,
+        content: currentContent },
+    });
+
+    setEditingCommentId(null);
+    setCurrentContent("");
+  };
+
+  const handleCommentCancel = () => {
+    setEditingCommentId(null);
+    setCurrentContent("");
+  };
+
+  const handleCommentDelete = (commentId: string) => {
+    if (confirm("Are you sure you want to delete this comment?")) {
+      credentialsController.commentsDelete({
+        commentId,
+        cardId: card as string,
+      });
+    }
+  };
+
+    
+
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <Participants
@@ -218,7 +266,10 @@ const CardPage = () => {
         </p>
       </div>
       <div className="w-full h-full flex-col flex gap-[1vw] ">
+        {/* Description & Comments */}
         <div className="w-full h-full flex gap-[1vw]">
+          <div className="flex gap-5 w-full">
+            {/* Description */}
           <div className="w-6/12 h-full flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] grow">
             <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
               Description
@@ -247,6 +298,8 @@ const CardPage = () => {
               </p>
             )}
           </div>
+
+          {/* Comments */}
           <div className="w-6/12 h-full overflow-hidden flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] gap-[1vw] grow">
             <p className="font-secondary text-vw-sm font-bold text-darkGray w-full text-right">
               Comments
@@ -264,101 +317,56 @@ const CardPage = () => {
                         (isTheUser ? "self-end bg-[#9faec7]" : "self-start")
                       }
                     >
-                      <div className="w-full flex justify-end items-center text-vw-sm -mb-5 gap-2">
-                        {/* {isTheUser && <AiFillEdit className="text-darkGray justify-end items-end text-right" />} */}
-                        {/* Edit Button */}
-                        {/* <div className="">
-                        <AiFillEdit 
-                          className="text-darkGray justify-end items-end text-right"
-                          onClick={() => {}} />
-                      </div> */}
-
-                        {/* Delete Button */}
-                        {/* <div>
-                        <AiFillDelete 
-                          className="text-darkGray justify-end items-end text-right"
-                          onClick={() => {}}/>
-                      </div> */}
-
-                        {/* ChatGPT */}
-                        {/* {isTheUser && ( */}
-                        {isTheUser && (
-                          <>
-                            {/* Edit Button */}
-                            <div className="cursor-pointer">
-                              <AiFillEdit
-                                className="text-darkGray cursor-pointer"
-                                onClick={() => {
-                                  const updatedContent = prompt(
-                                    "Edit your comment:",
-                                    comment.content
-                                  );
-                                  if (
-                                    updatedContent !== null &&
-                                    updatedContent.trim()
-                                  ) {
-                                    credentialsController.commentsUpdate({
-                                      commentId: comment._id,
-                                      data: {
-                                        ...comment,
-                                        content: updatedContent
-                                      }
-                                    });
-                                  }
-                                }}
-                              />
-                            </div>
-
-                            {/* Delete Button */}
-                            <div className="cursor-pointer">
-                              <AiFillDelete
-                                className="text-darkGray cursor-pointer"
-                                onClick={() => {
-                                  if (
-                                    confirm(
-                                      "Are you sure you want to delete this comment?"
-                                    )
-                                  ) {
-                                    credentialsController.commentsDelete({
-                                      commentId: comment._id,
-                                      cardId: card as string
-                                    });
-                                  }
-                                }}
-                              />
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <p className="font-secondary text-vw-sm font-bold text-darkGray w-11/12">
-                        {/* {comment.userId + " "} */}
-                        {typeof comment?.userId === "object" &&
-                        comment?.userId != null
-                          ? comment?.userId?.username
-                          : "Anonymous"}{" "}
-                        <span className="italic font-normal">
-                          {comment.isEdited && " (edited)"}
-                        </span>
-                      </p>
-                      <p className="font-secondary text-vw-xs/tight text-darkGray w-full text-justify">
-                        {comment.content}
-                      </p>
-                    </div>
-                  );
-                })}
-              {/* <div className="w-10/12 h-fit flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] self-end">
-                <div className="flex items-center justify-end w-full gap-[.5vw]">
-                  <AiFillEdit className="text-darkGray" />
-                  <p className="font-secondary text-vw-sm font-bold text-darkGray">
-                    Benaya
-                  </p>
+                      <div className="w-full flex justify-between items-center text-vw-sm gap-2">
+              <p className="font-secondary text-vw-sm font-bold text-darkGray">
+                {typeof comment.userId === "object" && comment.userId
+                  ? comment.userId.username
+                  : "Anonymous"}{" "}
+                <span className="italic font-normal">
+                  {comment.isEdited && "(edited)"}
+                </span>
+              </p>
+              {isTheUser && (
+                <div className="flex gap-2">
+                  <AiFillEdit
+                    className="text-darkGray cursor-pointer"
+                    onClick={() => handleCommentEdit(comment._id, comment.content)}
+                  />
+                  <AiFillDelete
+                    className="text-darkGray cursor-pointer"
+                    onClick={() => handleCommentDelete(comment._id)}
+                  />
                 </div>
-                <p className="font-secondary text-vw-xs/tight text-darkGray w-full text-justify rtl">
-                  Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem
-                  ipsum dolor sit amet. Lorem ipsum dolor sit amet. Lorem ipsum
-                  dolor sit amet.
-                </p>
-              </div> */}
+              )}
+            </div>
+            {editingCommentId === comment._id ? (
+              <div className="flex flex-col gap-2">
+                <textarea
+                  className="w-full h-[4em] border-[.2vw] border-darkGray rounded-[.4vw] p-[.5vw] resize-none"
+                  value={currentContent}
+                  onChange={(e) => setCurrentContent(e.target.value)}
+                />
+                <div className="flex gap-2 justify-end">
+                  <ButtonCustom
+                    text="Save"
+                    type="primary"
+                    onClick={() => handleCommentSave(comment._id)}
+                  />
+                  <ButtonCustom
+                    text="Cancel"
+                    type="secondary"
+                    onClick={handleCommentCancel}
+                  />
+                </div>
+              </div>
+            ) : (
+              <p className="font-secondary text-vw-xs/tight text-darkGray w-full text-justify">
+                {comment.content}
+              </p>
+            )}
+            </div>
+                );
+              })}
             </div>
             <div className="w-full h-fit flex items-center rounded-[.6vw] gap-[1vw] align-bottom">
               <InputCustom
@@ -393,6 +401,7 @@ const CardPage = () => {
                 classNameInput="w-full"
               />
             </div>
+          </div>
           </div>
         </div>
         <div className="w-full h-fit flex items-center p-[1vw] rounded-[.6vw] border-darkGray border-[.2vw] gap-[1vw]">
