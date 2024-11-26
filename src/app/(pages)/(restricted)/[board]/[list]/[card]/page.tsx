@@ -377,7 +377,10 @@ const CardPage = () => {
                       className="cursor-pointer hover:font-bold"
                       key={cont?._id + idx}
                       onClick={() => {
-                        axios
+                        toasterController.confirmationToast.createConfirmation({
+                          message: "Hapus contributor?",
+                          onYes: () => {
+                            axios
                           .delete(apiRoute.cards.collab + selectedCard?._id, {
                             data: { userId: cont?._id },
                             withCredentials: true
@@ -407,6 +410,38 @@ const CardPage = () => {
                               type: "error"
                             });
                           });
+                          }
+                        })
+                        // axios
+                        //   .delete(apiRoute.cards.collab + selectedCard?._id, {
+                        //     data: { userId: cont?._id },
+                        //     withCredentials: true
+                        //   })
+                        //   .then(() => {
+                        //     // remove from list
+                        //     const newContributors = contributors.filter(
+                        //       (con) => con._id !== cont?._id
+                        //     );
+                        //     setContributors(newContributors);
+
+                        //     // Toast
+                        //     toasterController.callToast({
+                        //       message:
+                        //         "Collaborator " +
+                        //         cont?.username +
+                        //         " is successfully removed",
+                        //       type: "success"
+                        //     });
+                        //   })
+                        //   .catch((err) => {
+                        //     // show error
+                        //     console.log(err);
+                        //     // Toast
+                        //     toasterController.callToast({
+                        //       message: "Collaborator removal error: " + err,
+                        //       type: "error"
+                        //     });
+                        //   });
                       }}
                     >
                       {cont?.username}
