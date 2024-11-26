@@ -246,7 +246,7 @@ const CardPage = () => {
                       (isTheUser ? "self-end bg-[#9faec7]" : "self-start")
                     }
                   >
-                    <div className="w-full flex justify-end items-center text-vw-sm -mb-5 gap-2">
+                    <div className="w-full flex justify-end items-center text-vw-sm sm:-mb-2 -mb-5 gap-2">
 {/* {isTheUser && <AiFillEdit className="text-darkGray justify-end items-end text-right" />} */}
                       {/* Edit Button */}
                       {/* <div className="">
