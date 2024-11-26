@@ -17,6 +17,7 @@ const SearchAndLog = ({
   const credentialsController = useCredentialsContext();
   const toasterController = useToasterContext();
   const searchController = useSearchContext();
+
   return (
     <>
       <div className="flex items-center justify-center gap-[1vw]">

@@ -262,37 +262,38 @@ export const CredentialsProvider = ({
     return undefined;
   };
 
-  const boardSearch = (query: string) => {
+  const boardSearch = async (query: string) => {
     if (!query) {
       // If the query is empty, fetch all boards
       boardFetch();
       return;
     }
-
+  
     toasterController.callToast({
       message: "Mencari board...",
       type: "info"
     });
-
-    axios
-      .get(`${apiRoute.board.mainRoute}?search=${query}`, {
+  
+    try {
+      const response = await axios.get(`${apiRoute.board.mainRoute}?search=${query}`, {
         withCredentials: true
-      })
-      .then((res) => {
-        const boardData = res.data.data as BoardData[];
+      });
+  
+      if (response.status === 200) {
+        const boardData = response.data.data as BoardData[];
         setBoardData(boardData);
         toasterController.callToast({
           message: "Sukses mencari board",
           type: "success"
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        toasterController.callToast({
-          message: "Error mencari board",
-          type: "error"
-        });
+      }
+    } catch (err) {
+      console.log(err);
+      toasterController.callToast({
+        message: "Error mencari board",
+        type: "error"
       });
+    }
   };
 
   const boardDelete = ({ boardId }: { boardId: string }) => {
