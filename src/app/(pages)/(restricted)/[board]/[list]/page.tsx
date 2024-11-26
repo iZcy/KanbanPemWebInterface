@@ -25,22 +25,6 @@ const KanbanPage = () => {
   const selectedList = credentialsController.lookingList;
   const selectedBoard = credentialsController.lookingBoard;
 
-  const [listTitleEditMode, setListTitleEditMode] = useState(false);
-  const [presentListTitle, setPresentListTitle] = useState(selectedList?.title);
-
-  const handleListTitleUpdate = () => {
-    setListTitleEditMode(false);
-    const currentData = credentialsController.lookingBoard;
-    credentialsController.boardUpdate({
-      title: presentListTitle || "",
-      _id: currentData?._id || "",
-      description: currentData?.description || "",
-      visibility: currentData?.visibility || "private",
-      createdAt: currentData?.createdAt || "",
-      userId: currentData?.userId || "",
-    });
-  };
-
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
