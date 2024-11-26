@@ -13,7 +13,7 @@ interface AuthBody {
   setDisabled: (value: boolean) => void;
 }
 
-export type Role = "guest" | "member" | "admin";
+export type Role = "guest" | "member" | "admin" | "none";
 
 export interface BasicUserData {
   email: string;
