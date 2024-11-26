@@ -81,14 +81,14 @@ const Participants = (props: ParticipantsComponentProps) => {
   return (
     <div
       className={
-        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 bg-lightGray py-[5vh] z-[100] " +
+        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 bg-lightGray/[75%] py-[5vh] z-[100] " +
         (!props.isActive && "hidden")
       }
     >
       <div
         className={twMerge(
           "flex flex-col gap-[1vw] rounded-[.5vw] p-[2vw] w-[30vw]",
-          "border-[.2vw] border-darkGray overflow-hidden h-fit"
+          "border-[.2vw] border-darkGray overflow-hidden h-fit bg-lightGray"
         )}
       >
         <div className="w-full flex items-center text-center mb-[1vw]">

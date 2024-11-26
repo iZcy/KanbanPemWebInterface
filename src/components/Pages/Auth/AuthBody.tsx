@@ -207,9 +207,16 @@ const AuthBody = (props: AuthBodyProps) => {
           <ButtonCustom
             text={"Delete"}
             onClick={() => {
-              credentialsController.deleteAccAction({
-                setDisabled: props.setDisabled,
-                userId: credentialsController.accData?._id || ""
+              toasterController.confirmationToast.createConfirmation({
+                message:
+                  "Akan menghapus akun " +
+                  credentialsController?.accData?.username,
+                onYes: () => {
+                  credentialsController.deleteAccAction({
+                    setDisabled: props.setDisabled,
+                    userId: credentialsController.accData?._id || ""
+                  });
+                }
               });
             }}
             classNameDiv={

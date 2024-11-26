@@ -3,6 +3,7 @@
 import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { useToasterContext } from "@/contexts/ToasterContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
@@ -12,6 +13,7 @@ const KanbanPage = () => {
 
   const { list } = useParams();
   const credentialsController = useCredentialsContext();
+  const toasterController = useToasterContext();
 
   const cardsFetchRef = useRef(credentialsController.cardsFetch);
   useEffect(() => {
@@ -35,11 +37,15 @@ const KanbanPage = () => {
 
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
-            onClick={() =>
-              credentialsController.listsDelete({
-                listId: list as string
-              })
-            }
+            onClick={() => {
+              toasterController.confirmationToast.createConfirmation({
+                message: "Menghapus list " + selectedList?.title,
+                onYes: () =>
+                  credentialsController.listsDelete({
+                    listId: list as string
+                  })
+              });
+            }}
           />
           <HiPlusCircle
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"

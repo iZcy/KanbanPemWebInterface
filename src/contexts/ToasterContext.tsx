@@ -8,17 +8,15 @@ import { useContext, createContext, useState } from "react";
 
 interface ConfirmationProps {
   message: string;
-  onYes: () => void;
-  onNo: () => void;
+  onYes?: () => void;
+  onNo?: () => void;
 }
 
 interface ConfirmationToastProps {
   active: boolean;
   message: string;
   onYes: () => void;
-  setOnYes: (callback: () => void) => void;
   onNo: () => void;
-  setOnNo: (callback: () => void) => void;
   createConfirmation: (props: ConfirmationProps) => void;
   clearConfirmation: () => void;
   isLoading: boolean;
@@ -58,8 +56,15 @@ export const ToasterProvider = ({
   const createConfirmation = (props: ConfirmationProps) => {
     setCA(true);
     setCM(props.message);
-    setOnYes(() => props.onYes);
-    setOnNo(() => props.onNo);
+    setOnYes(() => () => {
+      if (props?.onYes) props.onYes();
+      clearConfirmation();
+      setCA(false);
+    });
+    setOnNo(() => () => {
+      if (props?.onNo) props.onNo();
+      setCA(false);
+    });
   };
 
   const clearConfirmation = () => {
@@ -78,9 +83,7 @@ export const ToasterProvider = ({
           active: confirmationActive,
           message: confirmationMessage,
           onYes,
-          setOnYes,
           onNo,
-          setOnNo,
           createConfirmation,
           clearConfirmation,
           isLoading,
