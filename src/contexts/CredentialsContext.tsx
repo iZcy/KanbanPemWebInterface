@@ -13,11 +13,21 @@ interface AuthBody {
   setDisabled: (value: boolean) => void;
 }
 
-export interface AccountData {
-  _id: string;
+export type Role = "guest" | "member" | "admin";
+
+export interface BasicUserData {
   email: string;
   username: string;
-  role: "guest" | "member" | "admin";
+  role: Role;
+}
+
+export interface AccountData extends BasicUserData {
+  _id: string;
+}
+
+export interface RegData extends BasicUserData {
+  password: string;
+  confirmPassword: string;
 }
 
 export interface BoardData {
@@ -28,7 +38,6 @@ export interface BoardData {
   visibility: "private" | "public";
   createdAt: string;
 }
-// export type { BoardData };
 
 export interface ListData {
   _id: string;
@@ -52,7 +61,7 @@ interface CardData {
 interface CommentsData {
   _id: string;
   cardId: string;
-  userId: string;
+  userId: AccountData;
   content: string;
   isEdited: boolean;
 }
@@ -662,8 +671,8 @@ export const CredentialsProvider = ({
         apiRoute.comments.mainRoute + cardId,
         {
           content: content,
-          userId: accData?._id
-        } as CommentsData,
+          userId: accData?._id || ""
+        },
         {
           withCredentials: true
         }
@@ -726,13 +735,7 @@ export const CredentialsProvider = ({
       });
   };
 
-  const commentsDelete = ({
-    commentId,
-    cardId
-  }: {
-    commentId: string;
-    cardId: string;
-  }) => {
+  const commentsDelete = ({ commentId }: { commentId: string }) => {
     toasterController.callToast({
       message: "Menghapus comment...",
       type: "info"
