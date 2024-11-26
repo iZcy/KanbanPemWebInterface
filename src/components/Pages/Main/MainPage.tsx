@@ -2,24 +2,38 @@
 
 import CardItem from "@/components/CardItem";
 import CreateBoardModal from "@/components/CreateBoardModal";
-import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { useCredentialsContext, BoardData } from "@/contexts/CredentialsContext";
 import { enumVisibility } from "@/helper/typesEnums";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle } from "react-icons/hi";
 import SearchAndLog from "@/components/SearchAndLog";
+import { useSearchContext } from "@/contexts/SearchContext";
 
 const BoardPage = () => {
   const router = useRouter();
   const credentialsController = useCredentialsContext();
+  const searchController = useSearchContext();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [filteredBoards, setFilteredBoards] = useState<BoardData[]>([]);
 
   const boardFetchRef = useRef(credentialsController.boardFetch);
 
   useEffect(() => {
     boardFetchRef.current();
   }, []);
+
+  useEffect(() => {
+    if (searchController.search) {
+      const filtered = credentialsController.boardData.filter((board) =>
+        board.title.toLowerCase().includes(searchController.search.toLowerCase())
+      );
+      setFilteredBoards(filtered);
+    } else {
+      setFilteredBoards(credentialsController.boardData);
+    }
+  }, [searchController.search, credentialsController.boardData]);
 
   const handleCreateBoard = async (
     title: string,
@@ -32,18 +46,14 @@ const BoardPage = () => {
       visibility
     });
     if (newBoard) {
-      const newBoardData = credentialsController.boardData;
-      newBoardData.push(newBoard);
-      credentialsController.setBoardData(newBoardData);
+      credentialsController.boardFetch();
     }
     setIsModalOpen(false);
   };
 
   return (
     <div className="w-full h-full overflow-y-clip">
-      {/* Wrapper for content, apply blur when modal is open */}
-      <div
-        className={`transition-filter duration-300 h-full ${
+      <div className={`transition-filter duration-300 h-full ${
           isModalOpen ? "blur-md" : ""
         }`}
       >
@@ -60,16 +70,16 @@ const BoardPage = () => {
               <p className="font-secondary text-vw-md">
                 Halo,
                 <span className="font-bold">
-                  {" " +
-                    (credentialsController.accData?.username || "Guest") +
-                    "!"}
+                  {" " + (credentialsController.accData?.username || "Guest") + "!"}
                 </span>
               </p>
             </div>
           </div>
+          
           <SearchAndLog placeholder="Search board..." noBack={true} />
+          
           <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] h-full overflow-y-scroll">
-            {credentialsController.boardData.map((board, index) => (
+            {filteredBoards.map((board, index) => (
               <CardItem
                 key={index}
                 title={board.title}
@@ -85,7 +95,7 @@ const BoardPage = () => {
           </div>
         </div>
       </div>
-      {/* Modal */}
+      
       <CreateBoardModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
