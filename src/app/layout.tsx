@@ -21,7 +21,7 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: "Kanban FORYA",
-  description: "Created by Fawwaz, Ovie, Yitzhak, Aurore, Abe"
+  description: "Created by Fawwaz, Ovie, Rore, Yitzhak, Abe [FORYA]"
 };
 
 export default function RootLayout({
