@@ -192,6 +192,11 @@ const AuthBody = (props: AuthBodyProps) => {
                   setDisabled: props.setDisabled,
                   userId: credentialsController.accData?._id || ""
                 });
+
+                // clear password
+                props.setPass("");
+
+                if (props?.setConPass) props.setConPass("");
               }
             }}
             classNameDiv="mt-[1vw] w-full disabled:opacity-50"
