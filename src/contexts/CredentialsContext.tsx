@@ -425,7 +425,6 @@ export const CredentialsProvider = ({
   };
 
   const listsUpdate = (data: ListData) => {
-    console.log("Updating List:", data); // Debug log untuk memeriksa data yang dikirim
     toasterController.callToast({
       message: "Mengupdate List...",
       type: "info"

@@ -110,7 +110,6 @@ const Participants = (props: ParticipantsComponentProps) => {
                 key={idx}
                 text={part?.username}
                 onClick={async () => {
-                  console.log(part._id);
                   await axios
                     .post(
                       `${apiRoute.cards.addCollab}${props.cardId}`, // Endpoint API

@@ -132,14 +132,12 @@ const CardPage = () => {
     setDescriptionEditMode(false);
     if (selectedCard) {
       selectedCard.description = presentDescription!;
-      console.log("Updating card:", selectedCard);
 
       try {
         credentialsController.cardsUpdate({
           cardId: selectedCard._id,
           data: selectedCard
         });
-        console.log("Update successful");
       } catch (error) {
         console.error("Update failed:", error);
       }
