@@ -196,6 +196,7 @@ export const CredentialsProvider = ({
       message: "Mengambil data board...",
       type: "info"
     });
+    toasterController.confirmationToast.setIsLoading(true);
 
     axios
       .get(apiRoute.board.mainRoute, {
@@ -216,6 +217,8 @@ export const CredentialsProvider = ({
           type: "error"
         });
       });
+
+    toasterController.confirmationToast.setIsLoading(false);
   };
   const boardCreate = async (data: {
     title: string;
