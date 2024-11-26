@@ -1,11 +1,14 @@
 import { useState } from "react";
-import InputCustom from "@/components/InputCustom";
 import ButtonCustom from "@/components/ButtonCustom";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (title: string, description: string, visibility: "private" | "public") => void;
+  onSave: (
+    title: string,
+    description: string,
+    visibility: "private" | "public"
+  ) => void;
 }
 
 const CreateBoardModal = ({ isOpen, onClose, onSave }: ModalProps) => {
@@ -53,7 +56,9 @@ const CreateBoardModal = ({ isOpen, onClose, onSave }: ModalProps) => {
           </label>
           <select
             value={visibility}
-            onChange={(e) => setVisibility(e.target.value as "private" | "public")}
+            onChange={(e) =>
+              setVisibility(e.target.value as "private" | "public")
+            }
             className="rounded-[.5vw] text-vw-xs text-darkGray px-[.6vw] py-[.4vw] border-lightGray border-[.2vw] outline-none w-full"
           >
             <option value="private">Private</option>
