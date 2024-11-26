@@ -30,9 +30,9 @@ const KanbanPage = () => {
   const handleTitleUpdate = async () => {
     setTitleEditMode(false); // Keluar dari mode edit
     const currentData = credentialsController.lookingList;
-  
+
     if (!presentTitle || !currentData?._id) return; // Validasi input
-  
+
     try {
       // Panggil listsUpdate untuk memperbarui judul list di backend
       await credentialsController.listsUpdate({
@@ -47,8 +47,7 @@ const KanbanPage = () => {
     } catch (error) {
       console.error("Failed to update list title:", error);
     }
-  };  
-  
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">

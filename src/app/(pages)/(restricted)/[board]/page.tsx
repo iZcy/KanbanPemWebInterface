@@ -18,7 +18,7 @@ const ListPage = () => {
 
   useEffect(() => {
     listFetchRef.current({
-      boardId: board as string,
+      boardId: board as string
     });
   }, [board]);
 
@@ -26,7 +26,9 @@ const ListPage = () => {
   const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
 
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);
-  const [presentDescription, setPresentDescription] = useState(selectedBoard?.description);
+  const [presentDescription, setPresentDescription] = useState(
+    selectedBoard?.description
+  );
 
   const handleTitleUpdate = () => {
     setTitleEditMode(false);
@@ -37,7 +39,7 @@ const ListPage = () => {
       description: currentData?.description || "",
       visibility: currentData?.visibility || "private",
       createdAt: currentData?.createdAt || "",
-      userId: currentData?.userId || "",
+      userId: currentData?.userId || ""
     });
   };
 
@@ -50,12 +52,12 @@ const ListPage = () => {
       description: presentDescription || "",
       visibility: currentData?.visibility || "private",
       createdAt: currentData?.createdAt || "",
-      userId: currentData?.userId || "",
+      userId: currentData?.userId || ""
     });
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-[.5vw]">
+    <div className="w-full h-full flex flex-col gap-[.5vw] overflow-clip">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
           {titleEditMode ? (
@@ -126,7 +128,7 @@ const ListPage = () => {
         )}
       </div>
       <SearchAndLog placeholder="Search list..." />
-      <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw]">
+      <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] overflow-y-scroll h-full">
         {credentialsController.listsData.map((list, index) => (
           <CardItem
             key={index}
