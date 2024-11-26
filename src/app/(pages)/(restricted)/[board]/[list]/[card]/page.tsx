@@ -1,6 +1,5 @@
 "use client";
 
-import apiRoute from "@/api/routes";
 import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
 import Participants from "@/components/Pages/Popup/Participants";
@@ -8,8 +7,6 @@ import {
   ContributorData,
   useCredentialsContext
 } from "@/contexts/CredentialsContext";
-import { useToasterContext } from "@/contexts/ToasterContext";
-import axios from "axios";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -57,51 +54,51 @@ const CardPage = () => {
 
   const [username, setUsername] = useState("");
 
-  const toasterController = useToasterContext();
   const handleAddUser = async () => {
-    try {
-      const response = await axios.post(
-        `${apiRoute.cards.addCollab}${selectedCard?._id}`, // Endpoint API
-        { userId: username }, // Data body
-        { withCredentials: true } // Opsi credentials
-      );
+    setIsActive(true);
+    // try {
+    //   const response = await axios.post(
+    //     `${apiRoute.cards.addCollab}${selectedCard?._id}`, // Endpoint API
+    //     { userId: username }, // Data body
+    //     { withCredentials: true } // Opsi credentials
+    //   );
 
-      // Log respons untuk memastikan `username` diterima
-      console.log("API Response:", response.data);
+    //   // Log respons untuk memastikan `username` diterima
+    //   console.log("API Response:", response.data);
 
-      // Ambil username dari respons
-      const added = response.data.data;
+    //   // Ambil username dari respons
+    //   const added = response.data.data;
 
-      // Tambahkan username ke state contributors
-      setContributors((prev) => {
-        const updatedContributors = [...prev, added];
-        console.log("Updated contributors:", updatedContributors);
-        return updatedContributors;
-      });
+    //   // Tambahkan username ke state contributors
+    //   setContributors((prev) => {
+    //     const updatedContributors = [...prev, added];
+    //     console.log("Updated contributors:", updatedContributors);
+    //     return updatedContributors;
+    //   });
 
-      // Reset input field
-      setUsername("");
-      toasterController.callToast({
-        message: "Add collaborator success!",
-        type: "success"
-      });
-    } catch (err) {
-      // expand error so I can read the response
-      const error = err as {
-        response: {
-          data: {
-            data: string;
-          };
-        };
-      };
+    //   // Reset input field
+    //   setUsername("");
+    //   toasterController.callToast({
+    //     message: "Add collaborator success!",
+    //     type: "success"
+    //   });
+    // } catch (err) {
+    //   // expand error so I can read the response
+    //   const error = err as {
+    //     response: {
+    //       data: {
+    //         data: string;
+    //       };
+    //     };
+    //   };
 
-      console.error("Error adding contributor:", err);
-      // Display in toaster
-      toasterController.callToast({
-        message: "Error: " + error?.response?.data?.data,
-        type: "error"
-      });
-    }
+    //   console.error("Error adding contributor:", err);
+    //   // Display in toaster
+    //   toasterController.callToast({
+    //     message: "Error: " + error?.response?.data?.data,
+    //     type: "error"
+    //   });
+    // }
   };
 
   useEffect(() => {
@@ -407,32 +404,20 @@ const CardPage = () => {
             {contributors && contributors?.length > 0 ? (
               <>
                 {contributors.map((cont, idx) => {
-                  return <span key={cont._id + idx}>{cont.username}</span>;
+                  return <span key={cont?._id + idx}>{cont?.username}</span>;
                 })}
               </>
             ) : (
               <span>No contributors added yet.</span> // Menampilkan pesan jika tidak ada contributor
             )}
           </div>
-          <div className="flex gap-[.5vw]">
-            <InputCustom
-              type="text"
-              placeholder="Add contributor..."
-              value={username}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setUsername(e.target.value);
-              }}
-              classNameDiv="w-fit"
-              classNameInput="w-[200px] border-darkGray h-[50px] text-[16px]"
-            />
-            <ButtonCustom
-              onClick={handleAddUser}
-              text="Add"
-              type="primary"
-              classNameDiv="w-fit"
-              classNameInput="w-full"
-            />
-          </div>
+          <ButtonCustom
+            onClick={handleAddUser}
+            text="Add"
+            type="primary"
+            classNameDiv="w-fit"
+            classNameInput="w-full"
+          />
         </div>
         <div className="w-fit h-fit flex gap-[1vw]">
           <p className="font-secondary text-vw-xs text-darkGray">

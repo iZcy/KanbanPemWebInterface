@@ -4,7 +4,7 @@ import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
@@ -25,9 +25,6 @@ const KanbanPage = () => {
   const selectedList = credentialsController.lookingList;
   const selectedBoard = credentialsController.lookingBoard;
 
-  const [listTitleEditMode, setListTitleEditMode] = useState(false);
-  const [presentListTitle, setPresentListTitle] = useState(selectedList?.title);
-
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
@@ -35,7 +32,7 @@ const KanbanPage = () => {
           <p className="font-primary font-bold text-vw-md">
             {selectedBoard?.title + " / " + selectedList?.title}
           </p>
-        
+
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
             onClick={() =>

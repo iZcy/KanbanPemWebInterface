@@ -37,17 +37,19 @@ const Participants = (props: ParticipantsComponentProps) => {
       .then((res) => {
         const data = res.data.data;
 
-        // convert data list to ParticipantProps list
-        const participants: ContributorData[] = data.map(
-          (part: ContributorData) => {
-            if (part._id === accDataRef.current?._id) return;
-            // check if it's already a participant
-            if (props.alreadyParticipants.find((el) => el._id === part._id))
-              return;
+        // filter data list to ParticipantProps list
+        const filteredData = data.filter(
+          (part: ContributorData) =>
+            part._id !== accDataRef.current?._id &&
+            !props.alreadyParticipants.find((el) => el._id === part._id)
+        );
 
+        const participants: ContributorData[] = filteredData.map(
+          (part: ContributorData) => {
             return {
               username: part.username,
-              _id: part._id
+              _id: part._id,
+              email: part.email
             };
           }
         );
