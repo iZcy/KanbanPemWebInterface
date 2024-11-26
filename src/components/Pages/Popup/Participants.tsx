@@ -112,7 +112,7 @@ const Participants = (props: ParticipantsComponentProps) => {
                 onClick={async () => {
                   await axios
                     .post(
-                      `${apiRoute.cards.addCollab}${props.cardId}`, // Endpoint API
+                      `${apiRoute.cards.collab}${props.cardId}`, // Endpoint API
                       { userId: part._id }, // Data body
                       { withCredentials: true } // Opsi credentials
                     )
