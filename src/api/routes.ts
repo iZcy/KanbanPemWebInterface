@@ -10,7 +10,7 @@ const authGetAllUsersNameId = authRoute + "users/";
 const boardRoute = mainRoute + "board/";
 const listsRoute = mainRoute + "lists/";
 const cardsRoute = mainRoute + "cards/";
-const cardsAddCollabRoute = cardsRoute + "addcollab/";
+const cardsCollabRoute = cardsRoute + "collab/";
 const commentsRoute = mainRoute + "comments/";
 
 const apiRoute = {
@@ -33,7 +33,7 @@ const apiRoute = {
   },
   cards: {
     mainRoute: cardsRoute,
-    addCollab: cardsAddCollabRoute
+    collab: cardsCollabRoute
   },
   comments: {
     mainRoute: commentsRoute

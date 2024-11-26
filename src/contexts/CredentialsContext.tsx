@@ -65,9 +65,9 @@ interface CardData {
 }
 
 interface CommentsData {
-  _id: string;
+  _id?: string;
   cardId: string;
-  userId: AccountData;
+  userId?: AccountData;
   content: string;
   isEdited: boolean;
 }

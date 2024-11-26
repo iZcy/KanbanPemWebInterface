@@ -8,6 +8,7 @@ import ToastProvider from "@/components/Toaster/ToastProvider";
 import { CredentialsProvider } from "@/contexts/CredentialsContext";
 import LoadingShell from "@/components/Shell/LoadingShell";
 import { SearchProvider } from "@/contexts/SearchContext";
+import Popup from "@/components/Pages/Popup/ConfirmationPopup";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
         <ToasterProvider>
           <CredentialsProvider>
             <ToastProvider />
+            <Popup />
             <LoadingShell>
               <SearchProvider>{children}</SearchProvider>
             </LoadingShell>

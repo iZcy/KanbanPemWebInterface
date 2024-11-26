@@ -1,7 +1,9 @@
 "use client";
 
 import { toast } from "react-toastify";
-import CustomToast, { CustomToastProps } from "@/components/Toaster/CustomToast";
+import CustomToast, {
+  CustomToastProps
+} from "@/components/Toaster/CustomToast";
 import { useContext, createContext, useState } from "react";
 
 interface ConfirmationProps {
@@ -14,7 +16,9 @@ interface ConfirmationToastProps {
   active: boolean;
   message: string;
   onYes: () => void;
+  setOnYes: (callback: () => void) => void;
   onNo: () => void;
+  setOnNo: (callback: () => void) => void;
   createConfirmation: (props: ConfirmationProps) => void;
   clearConfirmation: () => void;
   isLoading: boolean;
@@ -74,7 +78,9 @@ export const ToasterProvider = ({
           active: confirmationActive,
           message: confirmationMessage,
           onYes,
+          setOnYes,
           onNo,
+          setOnNo,
           createConfirmation,
           clearConfirmation,
           isLoading,

@@ -81,7 +81,7 @@ const Participants = (props: ParticipantsComponentProps) => {
   return (
     <div
       className={
-        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 bg-lightGray py-[5vh] " +
+        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 bg-lightGray py-[5vh] z-[100] " +
         (!props.isActive && "hidden")
       }
     >
@@ -112,7 +112,7 @@ const Participants = (props: ParticipantsComponentProps) => {
                 onClick={async () => {
                   await axios
                     .post(
-                      `${apiRoute.cards.addCollab}${props.cardId}`, // Endpoint API
+                      `${apiRoute.cards.collab}${props.cardId}`, // Endpoint API
                       { userId: part._id }, // Data body
                       { withCredentials: true } // Opsi credentials
                     )
