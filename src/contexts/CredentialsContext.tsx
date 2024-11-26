@@ -39,6 +39,12 @@ export interface BoardData {
   createdAt: string;
 }
 
+export interface ContributorData {
+  _id: string;
+  username: string;
+  email: string;
+}
+
 export interface ListData {
   _id: string;
   title: string;
@@ -54,7 +60,7 @@ interface CardData {
   createdAt: string;
   dueDate: string;
   description: string;
-  assignedTo: string[];
+  assignedTo: ContributorData[];
   status: enumDeadline;
 }
 
