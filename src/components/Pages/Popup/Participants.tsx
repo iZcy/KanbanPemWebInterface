@@ -6,6 +6,7 @@ import {
   ContributorData,
   useCredentialsContext
 } from "@/contexts/CredentialsContext";
+import { useToasterContext } from "@/contexts/ToasterContext";
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -22,12 +23,14 @@ interface ParticipantsComponentProps {
 
 const Participants = (props: ParticipantsComponentProps) => {
   const credentialsController = useCredentialsContext();
+  const toasterController = useToasterContext();
 
   const [participantsList, setParticipantsList] = useState<ContributorData[]>(
     []
   );
 
   const accDataRef = useRef(credentialsController.accData);
+  const callToastRef = useRef(toasterController.callToast);
 
   const getParticipants = useCallback(() => {
     axios
@@ -55,6 +58,19 @@ const Participants = (props: ParticipantsComponentProps) => {
         );
 
         setParticipantsList(participants);
+
+        // toast success
+        callToastRef.current({
+          message: "Participant loaded",
+          type: "success"
+        });
+      })
+      .catch((err) => {
+        // toast error
+        callToastRef.current({
+          message: "Failed to load participants: " + err,
+          type: "error"
+        });
       });
   }, [props.alreadyParticipants]);
 
@@ -95,11 +111,27 @@ const Participants = (props: ParticipantsComponentProps) => {
                 text={part?.username}
                 onClick={async () => {
                   console.log(part._id);
-                  await axios.post(
-                    `${apiRoute.cards.addCollab}${props.cardId}`, // Endpoint API
-                    { userId: part._id }, // Data body
-                    { withCredentials: true } // Opsi credentials
-                  );
+                  await axios
+                    .post(
+                      `${apiRoute.cards.addCollab}${props.cardId}`, // Endpoint API
+                      { userId: part._id }, // Data body
+                      { withCredentials: true } // Opsi credentials
+                    )
+                    .then(() => {
+                      // toast success
+                      callToastRef.current({
+                        message: "Participant " + part.username + " added",
+                        type: "success"
+                      });
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      // toast error
+                      callToastRef.current({
+                        message: "Failed to add participant: " + err,
+                        type: "error"
+                      });
+                    });
                   getParticipants();
 
                   // update participants
