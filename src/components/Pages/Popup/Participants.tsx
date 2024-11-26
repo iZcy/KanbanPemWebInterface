@@ -81,7 +81,7 @@ const Participants = (props: ParticipantsComponentProps) => {
   return (
     <div
       className={
-        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 bg-lightGray py-[5vh] " +
+        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 bg-lightGray py-[5vh] z-[100] " +
         (!props.isActive && "hidden")
       }
     >
