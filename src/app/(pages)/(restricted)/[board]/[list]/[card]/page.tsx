@@ -17,7 +17,7 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 const CardPage = () => {
   const router = useRouter();
-
+  const params = useParams();
   const { card } = useParams();
   const [isActive, setIsActive] = useState(false);
   const [comment, setComment] = useState("");
@@ -32,9 +32,53 @@ const CardPage = () => {
     });
   }, [card]);
 
-  const selectedBoard = credentialsController.lookingBoard;
-  const selectedList = credentialsController.lookingList;
-  const selectedCard = credentialsController.lookingCard;
+  const [selectedCard, setSelectedCard] = useState(
+    credentialsController.lookingCard
+  );
+
+  const [selectedList, setSelectedList] = useState(
+    credentialsController.lookingList
+  );
+
+  const [selectedBoard, setSelectedBoard] = useState(
+    credentialsController.lookingBoard
+  );
+
+  useEffect(() => {
+    axios
+      .get(apiRoute.cards.singleRoute + card, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedCard(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get(apiRoute.lists.singleRoute + params.list, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedList(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get(apiRoute.board.singleRoute + params.board, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedBoard(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [params.list, params.board, card]);
+
   const valCreated = selectedCard?.createdAt;
   const valDue = selectedCard?.dueDate;
 
@@ -140,10 +184,10 @@ const CardPage = () => {
 
   const handleCommentDelete = (commentId: string) => {
     // if (confirm("Are you sure you want to delete this comment?")) {
-      credentialsController.commentsDelete({
-        commentId,
-        cardId: card as string
-      });
+    credentialsController.commentsDelete({
+      commentId,
+      cardId: card as string
+    });
     // }
   };
 
@@ -281,13 +325,18 @@ const CardPage = () => {
                               />
                               <AiFillDelete
                                 className="text-darkGray cursor-pointer"
-                                onClick={() =>
-                                  toasterController.confirmationToast.createConfirmation({
-                                    message: "Hapus komentar?",
-                                    onYes: () => {
-                                    handleCommentDelete(comment._id || "")
-                                    }
-                                  })
+                                onClick={
+                                  () =>
+                                    toasterController.confirmationToast.createConfirmation(
+                                      {
+                                        message: "Hapus komentar?",
+                                        onYes: () => {
+                                          handleCommentDelete(
+                                            comment._id || ""
+                                          );
+                                        }
+                                      }
+                                    )
                                   // handleCommentDelete(comment._id || "")
                                 }
                               />

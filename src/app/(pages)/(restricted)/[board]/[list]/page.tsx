@@ -1,17 +1,20 @@
 "use client";
 
+import apiRoute from "@/api/routes";
 import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
+import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
   const router = useRouter();
-
+  const params = useParams();
   const { list } = useParams();
+
   const credentialsController = useCredentialsContext();
   const toasterController = useToasterContext();
 
@@ -24,8 +27,37 @@ const KanbanPage = () => {
 
   const progressList = ["to-do", "in-progress", "done"];
 
-  const selectedList = credentialsController.lookingList;
-  const selectedBoard = credentialsController.lookingBoard;
+  const [selectedList, setSelectedList] = useState(
+    credentialsController.lookingList
+  );
+
+  const [selectedBoard, setSelectedBoard] = useState(
+    credentialsController.lookingBoard
+  );
+
+  useEffect(() => {
+    axios
+      .get(apiRoute.lists.singleRoute + list, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedList(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get(apiRoute.board.singleRoute + params.board, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedBoard(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [list, params.board]);
 
   const [titleListEditMode, setListTitleEditMode] = useState(false);
   const [presentTitle, setPresentTitle] = useState(selectedList?.title);
