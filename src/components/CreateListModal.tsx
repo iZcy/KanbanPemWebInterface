@@ -36,8 +36,8 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
   if (!isOpen) return null; // Jangan render jika modal tidak terbuka
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg w-[400px] p-6">
+    <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center">
+      <div className="bg-[#FFFFFF] p-6 rounded-lg w-1/3 border-2 border-darkGray shadow-lg">
         <h2 className="text-lg font-bold mb-4">Create New List</h2>
 
         {/* Input Title */}
