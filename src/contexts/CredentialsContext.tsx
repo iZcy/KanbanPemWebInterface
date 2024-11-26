@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useContext, createContext, useState } from "react";
@@ -36,13 +37,6 @@ export interface ListData {
   boardId: string;
   position: number;
   createdAt: string;
-  assignedTo: CollaboratorData[]; // Properti baru untuk kolaborator
-}
-
-export interface CollaboratorData {
-  _id: string;
-  username: string;
-  email: string;
 }
 
 interface CardData {
@@ -326,35 +320,30 @@ export const CredentialsProvider = ({
   const listsFetch = ({ boardId }: { boardId: string }) => {
     toasterController.callToast({
       message: "Mengambil data list...",
-      type: "info",
+      type: "info"
     });
-  
+
     axios
       .get(apiRoute.lists.mainRoute + boardId, {
-        withCredentials: true,
+        withCredentials: true
       })
       .then((res) => {
-        // Sinkronisasi kolaborator (assignedTo)
-        const listsData = res.data.data.map((list: ListData) => ({
-          ...list,
-          assignedTo: list.assignedTo || [], // Tambahkan kolaborator dari response backend
-        })) as ListData[];
-  
+        const listsData = res.data.data as ListData[];
+
         toasterController.callToast({
           message: "Sukses mengambil data list",
-          type: "success",
+          type: "success"
         });
-        setListsData(listsData); // Set listsData ke state setelah sinkronisasi
+        setListsData(listsData);
       })
       .catch((err) => {
         console.log(err);
         toasterController.callToast({
           message: "Error mengambil data list",
-          type: "error",
+          type: "error"
         });
       });
-  };  
-  
+  };
 
   const listsCreate = ({ boardId }: { boardId: string }) => {
     toasterController.callToast({

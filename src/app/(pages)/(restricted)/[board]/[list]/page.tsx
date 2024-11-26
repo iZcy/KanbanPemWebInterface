@@ -9,7 +9,6 @@ import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
   const router = useRouter();
-
   const { list } = useParams();
   const credentialsController = useCredentialsContext();
 
@@ -25,14 +24,60 @@ const KanbanPage = () => {
   const selectedList = credentialsController.lookingList;
   const selectedBoard = credentialsController.lookingBoard;
 
+  const [titleEditMode, setTitleEditMode] = useState(false);
+  const [presentTitle, setPresentTitle] = useState(selectedList?.title);
+
+  const handleTitleUpdate = async () => {
+    setTitleEditMode(false); // Keluar dari mode edit
+    const currentData = credentialsController.lookingList;
+  
+    if (!presentTitle || !currentData?._id) return; // Validasi input
+  
+    try {
+      // Panggil listsUpdate untuk memperbarui judul list di backend
+      await credentialsController.listsUpdate({
+        title: presentTitle, // Judul baru
+        _id: currentData._id, // ID list
+        boardId: currentData.boardId, // ID board
+        position: currentData.position, // Posisi saat ini
+        createdAt: currentData.createdAt // Tanggal pembuatan (tidak diubah)
+      });
+      // Tambahkan notifikasi jika perlu
+      console.log("List title updated successfully");
+    } catch (error) {
+      console.error("Failed to update list title:", error);
+    }
+  };  
+  
+
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
-          <p className="font-primary font-bold text-vw-md">
-            {selectedBoard?.title + " / " + selectedList?.title}
+          {titleEditMode ? (
+            <input
+              type="text"
+              value={presentTitle}
+              onChange={(e) => setPresentTitle(e.target.value)}
+              onBlur={handleTitleUpdate}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleTitleUpdate();
+                }
+              }}
+              className="font-primary font-bold text-vw-md"
+            />
+          ) : (
+            <p
+              className="font-primary font-bold text-vw-md cursor-pointer"
+              onClick={() => setTitleEditMode(true)}
+            >
+              {presentTitle}
+            </p>
+          )}
+          <p className="font-primary text-vw-md">
+            {" / " + selectedBoard?.title}
           </p>
-        
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
             onClick={() =>
@@ -95,7 +140,6 @@ const KanbanPage = () => {
                         router.push(`${currentLink}/${crd._id}`);
                       }}
                       createdAt={`${valCreate.getDate()}/${valCreate.getMonth()}/${valCreate.getFullYear()}`}
-                      // createdBy="Benaya Imanuela"
                       dueDate={`${valDue.getDate()}/${valDue.getMonth()}/${valDue.getFullYear()}`}
                       description={crd.description}
                       cardType="card"
