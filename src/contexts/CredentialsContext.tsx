@@ -380,14 +380,15 @@ export const CredentialsProvider = ({
   };
 
   const listsUpdate = (data: ListData) => {
+    console.log("Updating List:", data); // Debug log untuk memeriksa data yang dikirim
     toasterController.callToast({
       message: "Mengupdate List...",
       type: "info"
     });
-
+  
     axios
       .patch(
-        apiRoute.lists.mainRoute + data._id,
+        apiRoute.lists.mainRoute + data._id, // Endpoint backend
         {
           title: data.title,
           boardId: data.boardId,
@@ -402,18 +403,18 @@ export const CredentialsProvider = ({
           message: "Sukses mengupdate List",
           type: "success"
         });
-
-        // refetch list data
+  
+        // Refetch list data untuk memastikan UI terupdate
         listsFetch({ boardId: data.boardId });
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Error updating list:", err.response?.data || err.message); // Log error
         toasterController.callToast({
           message: "Error mengupdate list",
           type: "error"
         });
       });
-  };
+  };  
 
   const listsDelete = ({ listId }: { listId: string }) => {
     toasterController.callToast({
