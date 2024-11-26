@@ -27,12 +27,14 @@ const RootLayout = ({
       .then((res) => {
         const data = res.data.data as AccountData;
 
-        if (!data.role) router.replace("/auth");
-        else setAccDataRef.current(data);
+        if (data.role) {
+          setAccDataRef.current(data);
+          // Redirect to home /
+          router.replace("/");
+        }
       })
-      .catch((error) => {
-        console.error("Failed to fetch authentication status:", error);
-        router.replace("/auth");
+      .catch((err) => {
+        console.log(err);
       });
   }, [router]);
 

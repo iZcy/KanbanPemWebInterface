@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-const AuthPage = () => {
+const RegisterPage = () => {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -21,7 +21,7 @@ const AuthPage = () => {
       router.push("/");
     }
   }, [credentialsController.accData, router]);
-  
+
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div
@@ -75,9 +75,15 @@ const AuthPage = () => {
           type="primary"
           disabled={disabled}
         />
+        <div
+          className="text-center text-vw-sm underline text-darkGray hover:font-bold duration-500 w-fit self-center cursor-pointer"
+          onClick={() => router.push("/auth")}
+        >
+          Login?
+        </div>
       </div>
     </div>
   );
 };
 
-export default AuthPage;
+export default RegisterPage;

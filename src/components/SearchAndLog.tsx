@@ -5,7 +5,13 @@ import SearchBar from "./SearchBar";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useSearchContext } from "@/contexts/SearchContext";
 
-const SearchAndLog = ({placeholder}: {placeholder: string}) => {
+const SearchAndLog = ({
+  placeholder,
+  noBack = false
+}: {
+  placeholder: string;
+  noBack?: boolean;
+}) => {
   const router = useRouter();
   const credentialsController = useCredentialsContext();
   const searchController = useSearchContext();
@@ -29,7 +35,7 @@ const SearchAndLog = ({placeholder}: {placeholder: string}) => {
           }}
           text="Back"
           type="primary"
-          classNameDiv="w-fit"
+          classNameDiv={"w-fit " + noBack && "hidden"}
           classNameInput="w-full"
         />
         <ButtonCustom

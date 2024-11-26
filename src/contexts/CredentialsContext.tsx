@@ -64,12 +64,16 @@ interface CredentialsFlowController {
   accData: AccountData | null;
   setAccData: (data: AccountData | null) => void;
   boardData: BoardData[];
+  setBoardData: (data: BoardData[]) => void;
   lookingBoard: BoardData | null;
   setLookingBoard: React.Dispatch<React.SetStateAction<BoardData | null>>;
   boardFetch: () => void;
   boardSearch: (query: string) => void;
-  // boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<void>;
-  boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<BoardData | undefined>;
+  boardCreate: (data: {
+    title: string;
+    description: string;
+    visibility: "private" | "public";
+  }) => Promise<BoardData | undefined>;
   boardUpdate: (data: BoardData) => void;
   boardDelete: ({ boardId }: { boardId: string }) => void;
   listsData: ListData[];
@@ -176,16 +180,16 @@ export const CredentialsProvider = ({
         });
       });
   };
-  const boardCreate = async (data: { 
-    title: string; 
-    description: string; 
-    visibility: "private" | "public" 
+  const boardCreate = async (data: {
+    title: string;
+    description: string;
+    visibility: "private" | "public";
   }): Promise<BoardData | undefined> => {
     toasterController.callToast({
       message: "Membuat board...",
       type: "info"
     });
-  
+
     try {
       const response = await axios.post(
         apiRoute.board.mainRoute,
@@ -198,7 +202,7 @@ export const CredentialsProvider = ({
           withCredentials: true
         }
       );
-  
+
       if (response.status === 200) {
         const newBoard = response.data;
         toasterController.callToast({
@@ -224,12 +228,12 @@ export const CredentialsProvider = ({
       boardFetch();
       return;
     }
-  
+
     toasterController.callToast({
       message: "Mencari board...",
       type: "info"
     });
-  
+
     axios
       .get(`${apiRoute.board.mainRoute}?search=${query}`, {
         withCredentials: true
@@ -631,7 +635,7 @@ export const CredentialsProvider = ({
       .post(
         apiRoute.comments.mainRoute + cardId,
         {
-          content: content,
+          content: content
           // userId: accData?._id
         } as CommentsData,
         {
@@ -820,6 +824,7 @@ export const CredentialsProvider = ({
         boardCreate,
         boardUpdate,
         boardDelete,
+        setBoardData,
         listsData,
         listsFetch,
         listsCreate,
