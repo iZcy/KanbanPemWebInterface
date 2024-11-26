@@ -5,7 +5,7 @@ import SearchAndLog from "@/components/SearchAndLog";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
@@ -27,13 +27,46 @@ const KanbanPage = () => {
   const selectedList = credentialsController.lookingList;
   const selectedBoard = credentialsController.lookingBoard;
 
+  const [titleListEditMode, setListTitleEditMode] = useState(false);
+  const [presentTitle, setPresentTitle] = useState(selectedList?.title);
+
+  const handleListTitleUpdate = () => {
+    setListTitleEditMode(false);
+    const currentData = credentialsController.lookingList;
+    credentialsController.listsUpdate({
+      title: presentTitle || "",
+      _id: currentData?._id || "",
+      position: currentData?.position || 0,
+      createdAt: currentData?.createdAt || "",
+      boardId: currentData?.boardId || ""
+    });
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
-          <p className="font-primary font-bold text-vw-md">
-            {selectedBoard?.title + " / " + selectedList?.title}
+        {titleListEditMode ? (
+            <input
+              type="text"
+              value={presentTitle}
+              onChange={(e) => setPresentTitle(e.target.value)}
+              onBlur={handleListTitleUpdate}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleListTitleUpdate();
+                }
+              }}
+              className="font-primary font-bold text-vw-md"
+            />
+          ) : (
+            <p
+            className="font-primary font-bold text-vw-md cursor-pointer"
+            onClick={() => setListTitleEditMode(true)}
+          >
+            {presentTitle}
           </p>
+        )}
 
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
