@@ -101,7 +101,7 @@ interface CredentialsFlowController {
     commentId: string;
     data: CommentsData;
   }) => void;
-  commentsDelete: ({ commentId }: { commentId: string }) => void;
+  commentsDelete: ({ commentId, cardId }: { commentId: string; cardId: string }) => void;
   emptyAll: () => void;
 }
 
@@ -690,7 +690,13 @@ export const CredentialsProvider = ({
       });
   };
 
-  const commentsDelete = ({ commentId }: { commentId: string }) => {
+  const commentsDelete = ({ 
+    commentId,
+    cardId 
+  }: { 
+    commentId: string;
+    cardId: string; 
+  }) => {
     toasterController.callToast({
       message: "Menghapus comment...",
       type: "info"
@@ -706,7 +712,14 @@ export const CredentialsProvider = ({
           type: "success"
         });
         // refetch comment data
-        commentsFetch({ cardId: lookingCard?._id || "" });
+        // refetch comment data
+        // if (lookingCard?._id) {
+          // commentsFetch({ cardId: lookingCard._id });
+        // } else {
+          // console.error("Card ID is missing. Can't refetch comments");
+        // }
+        // commentsFetch({ cardId: lookingCard?._id || "" });
+        commentsFetch({ cardId });
       })
       .catch((err) => {
         console.log(err);
