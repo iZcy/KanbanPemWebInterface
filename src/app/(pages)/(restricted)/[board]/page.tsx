@@ -25,10 +25,6 @@ const ListPage = () => {
     });
   }, [board]);
 
-  useEffect(() => {
-    setList(credentialsController.listsData);
-  }, [credentialsController.listsData]);
-
   const [titleEditMode, setTitleEditMode] = useState(false);
   const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
 
@@ -81,7 +77,6 @@ const ListPage = () => {
       data: newList
     });
 
-    setLists((prevLists) => [...prevLists, newList]);
     setIsModalOpen(false); // Close modal after saving
   };
 
@@ -190,11 +185,3 @@ const ListPage = () => {
 };
 
 export default ListPage;
-function setList(listsData: import("@/contexts/CredentialsContext").ListData[]) {
-  throw new Error("Function not implemented.");
-}
-
-function setLists(arg0: (prevLists: any) => any[]) {
-  throw new Error("Function not implemented.");
-}
-
