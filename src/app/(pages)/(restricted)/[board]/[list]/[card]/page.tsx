@@ -6,7 +6,7 @@ import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AiFillEdit } from "react-icons/ai";
+import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 
 const CardPage = () => {
   const router = useRouter();
@@ -153,11 +153,63 @@ const CardPage = () => {
                   <div
                     key={idx}
                     className={
-                      "w-10/12 h-fit flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] " +
+                      "w-full h-fit flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] mr-5" +
                       (isTheUser ? "self-end" : "self-start")
                     }
                   >
-                    {isTheUser && <AiFillEdit className="text-darkGray" />}
+                    <div className="w-full flex justify-end items-center text-right -mb-5 text-[20px] gap-2">
+                      {/* {isTheUser && <AiFillEdit className="text-darkGray justify-end items-end text-right" />} */}
+                      {/* Edit Button */}
+                      {/* <div className="">
+                        <AiFillEdit 
+                          className="text-darkGray justify-end items-end text-right"
+                          onClick={() => {}} />
+                      </div> */}
+
+                      {/* Delete Button */}
+                      {/* <div>
+                        <AiFillDelete 
+                          className="text-darkGray justify-end items-end text-right"
+                          onClick={() => {}}/>
+                      </div> */}
+
+                      {/* ChatGPT */}
+                      {isTheUser && (
+                        <>
+                          {/* Edit Button */}
+                          <AiFillEdit
+                            className="text-darkGray cursor-pointer"
+                            onClick={() => {
+                              const updatedContent = prompt(
+                                "Edit your comment:",
+                                comment.content
+                              );
+                              if (updatedContent !== null && updatedContent.trim()) {
+                                credentialsController.commentsUpdate({
+                                  commentId: comment._id,
+                                  data: {
+                                    ...comment,
+                                    content: updatedContent
+                                  }
+                                });
+                              }
+                            }}
+                            />
+                          
+                          {/* Delete Button */}
+                          <AiFillDelete
+                            className="text-darkGray cursor-pointer"
+                            onClick={() => {
+                              if (confirm("Are you sure you want to delete this comment?")) {
+                                credentialsController.commentsDelete({
+                                  commentId: comment._id
+                                });
+                              }
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
                     <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
                       {/* {comment.userId + " "} */}
                       {typeof comment?.userId === "object" && comment?.userId != null
