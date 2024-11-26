@@ -177,40 +177,44 @@ const CardPage = () => {
                       {isTheUser && (
                         <>
                           {/* Edit Button */}
-                          <AiFillEdit
-                            className="text-darkGray cursor-pointer"
-                            onClick={() => {
-                              const updatedContent = prompt(
-                                "Edit your comment:",
-                                comment.content
-                              );
-                              if (updatedContent !== null && updatedContent.trim()) {
-                                credentialsController.commentsUpdate({
-                                  commentId: comment._id,
-                                  data: {
-                                    ...comment,
-                                    content: updatedContent
-                                  }
-                                });
-                              }
-                            }}
-                            />
+                          <div className="cursor-pointer">
+                            <AiFillEdit
+                              className="text-darkGray cursor-pointer"
+                              onClick={() => {
+                                const updatedContent = prompt(
+                                  "Edit your comment:",
+                                  comment.content
+                                );
+                                if (updatedContent !== null && updatedContent.trim()) {
+                                  credentialsController.commentsUpdate({
+                                    commentId: comment._id,
+                                    data: {
+                                      ...comment,
+                                      content: updatedContent
+                                    }
+                                  });
+                                }
+                              }}
+                              />
+                          </div>
                           
                           {/* Delete Button */}
-                          <AiFillDelete
-                            className="text-darkGray cursor-pointer"
-                            onClick={() => {
-                              if (confirm("Are you sure you want to delete this comment?")) {
-                                credentialsController.commentsDelete({
-                                  commentId: comment._id
-                                });
-                              }
-                            }}
-                          />
+                          <div className="cursor-pointer">
+                            <AiFillDelete
+                              className="text-darkGray cursor-pointer"
+                              onClick={() => {
+                                if (confirm("Are you sure you want to delete this comment?")) {
+                                  credentialsController.commentsDelete({
+                                    commentId: comment._id
+                                  });
+                                }
+                              }}
+                            />
+                          </div>
                         </>
                       )}
                     </div>
-                    <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
+                    <p className="font-secondary text-vw-sm font-bold text-darkGray w-11/12">
                       {/* {comment.userId + " "} */}
                       {typeof comment?.userId === "object" && comment?.userId != null
                         ? comment?.userId?.username
