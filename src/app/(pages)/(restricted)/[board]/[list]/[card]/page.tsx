@@ -206,7 +206,8 @@ const CardPage = () => {
                               onClick={() => {
                                 if (confirm("Are you sure you want to delete this comment?")) {
                                   credentialsController.commentsDelete({
-                                    commentId: comment._id
+                                    commentId: comment._id,
+                                    cardId: card as string
                                   });
                                 }
                               }}
