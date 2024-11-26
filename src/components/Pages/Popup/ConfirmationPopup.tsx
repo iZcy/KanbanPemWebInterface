@@ -10,14 +10,14 @@ const Popup = () => {
   return (
     <div
       className={
-        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 z-[100] bg-lightGray " +
+        "w-screen h-screen flex items-center justify-center absolute top-0 left-0 z-[100] bg-lightGray/[75%] " +
         (!toasterController?.confirmationToast.active && "hidden")
       }
     >
       <div
         className={twMerge(
           "flex flex-col gap-[1vw] rounded-[.5vw] p-[2vw] w-[30vw]",
-          "border-[.2vw] border-darkGray"
+          "border-[.2vw] border-darkGray bg-lightGray"
         )}
       >
         <div className="w-full flex items-center text-center mb-[1vw]">

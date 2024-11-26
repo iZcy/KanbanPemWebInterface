@@ -3,6 +3,7 @@
 import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { useToasterContext } from "@/contexts/ToasterContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
@@ -11,6 +12,7 @@ const ListPage = () => {
   const router = useRouter();
   const { board } = useParams();
   const credentialsController = useCredentialsContext();
+  const toasterController = useToasterContext();
 
   const listFetchRef = useRef(credentialsController.listsFetch);
 
@@ -85,7 +87,14 @@ const ListPage = () => {
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
             onClick={() => {
-              credentialsController.boardDelete({ boardId: board as string });
+              toasterController.confirmationToast.createConfirmation({
+                message: "Menghapus board " + selectedBoard?.title,
+                onYes: () => {
+                  credentialsController.boardDelete({
+                    boardId: board as string
+                  });
+                }
+              });
             }}
           />
           <HiPlusCircle
