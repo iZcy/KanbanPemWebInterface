@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import ButtonCustom from "@/components/ButtonCustom";
 
 interface CreateListModalProps {
-  isOpen: boolean; // Kontrol visibilitas modal
-  onClose: () => void; // Fungsi untuk menutup modal
-  onSave: (listData: { title: string; position: number; createdAt: string }) => void; // Fungsi untuk menyimpan data list
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (title: string, position: number, createdAt: string) => void;
 }
 
 const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSave }) => {
@@ -24,11 +24,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
     }
 
     // Panggil fungsi `onSave` dengan data list
-    onSave({
-      title,
-      position,
-      createdAt,
-    });
+    onSave(title, position, createdAt);
 
     // Reset state setelah berhasil menyimpan
     setTitle("");
