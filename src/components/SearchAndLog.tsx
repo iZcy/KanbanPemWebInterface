@@ -1,3 +1,4 @@
+//udah bisa mau update dikit
 "use client";
 import { useRouter } from "next/navigation";
 import ButtonCustom from "./ButtonCustom";
@@ -15,6 +16,7 @@ const SearchAndLog = ({
   const router = useRouter();
   const credentialsController = useCredentialsContext();
   const searchController = useSearchContext();
+
   return (
     <>
       <div className="flex items-center justify-center gap-[1vw]">
@@ -51,3 +53,4 @@ const SearchAndLog = ({
 };
 
 export default SearchAndLog;
+
