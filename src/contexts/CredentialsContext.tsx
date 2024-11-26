@@ -891,7 +891,7 @@ export const CredentialsProvider = ({
       .catch((err) => {
         // Inform
         toasterController.callToast({
-          message: "Gagal mendaftar " + err?.response?.data?.message,
+          message: "Gagal mendaftar " + err?.response?.data?.data,
           type: "error"
         });
         console.log(err);
