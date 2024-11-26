@@ -64,7 +64,7 @@ const ListPage = () => {
   const handleCreateList = async (
       title: string,
       position: number,
-      createdAt: string,
+
   ) => {
     const newList = {
       title,
@@ -157,6 +157,7 @@ const ListPage = () => {
         )}
       </div>
       <SearchAndLog placeholder="Search list..." />
+      
       <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] overflow-y-scroll h-full">
         {credentialsController.listsData.map((list, index) => (
           <CardItem
@@ -176,8 +177,8 @@ const ListPage = () => {
       <CreateListModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)} // Close modal on cancel
-        onSave={(title, position, createdAt) => {
-          handleCreateList(title, position, createdAt)
+        onSave={(title, position) => {
+          handleCreateList(title, position)
         }} // Save new list on save
       />
     </div>
