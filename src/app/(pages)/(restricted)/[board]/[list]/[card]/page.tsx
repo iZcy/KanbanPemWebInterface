@@ -3,20 +3,23 @@
 import apiRoute from "@/api/routes";
 import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
-import { ContributorData, useCredentialsContext } from "@/contexts/CredentialsContext";
+import Participants from "@/components/Pages/Popup/Participants";
+import {
+  ContributorData,
+  useCredentialsContext
+} from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-// import { CardData } from "@/contexts/CredentialsContext";
 
 const CardPage = () => {
   const router = useRouter();
 
   const { card } = useParams();
-
+  const [isActive, setIsActive] = useState(false);
   const [comment, setComment] = useState("");
 
   const credentialsController = useCredentialsContext();
@@ -24,7 +27,7 @@ const CardPage = () => {
   const commentFetchRef = useRef(credentialsController.commentsFetch);
   useEffect(() => {
     commentFetchRef.current({
-      cardId: card as string,
+      cardId: card as string
     });
   }, [card]);
 
@@ -58,7 +61,7 @@ const CardPage = () => {
   const handleAddUser = async () => {
     try {
       const response = await axios.post(
-        `${apiRoute.cards.addCollab}${card}`, // Endpoint API
+        `${apiRoute.cards.addCollab}${selectedCard?._id}`, // Endpoint API
         { userId: username }, // Data body
         { withCredentials: true } // Opsi credentials
       );
@@ -80,14 +83,23 @@ const CardPage = () => {
       setUsername("");
       toasterController.callToast({
         message: "Add collaborator success!",
-        type: "success",
+        type: "success"
       });
     } catch (err) {
+      // expand error so I can read the response
+      const error = err as {
+        response: {
+          data: {
+            data: string;
+          };
+        };
+      };
+
       console.error("Error adding contributor:", err);
       // Display in toaster
       toasterController.callToast({
-        message: "Error: " + err?.response?.data?.data,
-        type: "error",
+        message: "Error: " + error?.response?.data?.data,
+        type: "error"
       });
     }
   };
@@ -117,7 +129,7 @@ const CardPage = () => {
     selectedCard!.title = newTitle;
     credentialsController.cardsUpdate({
       cardId: selectedCard!._id,
-      data: selectedCard!,
+      data: selectedCard!
     });
   };
 
@@ -130,7 +142,7 @@ const CardPage = () => {
       try {
         credentialsController.cardsUpdate({
           cardId: selectedCard._id,
-          data: selectedCard,
+          data: selectedCard
         });
         console.log("Update successful");
       } catch (error) {
@@ -146,12 +158,20 @@ const CardPage = () => {
     selectedCard!.dueDate = newDueDate; // Update the selected card's dueDate
     credentialsController.cardsUpdate({
       cardId: selectedCard!._id,
-      data: selectedCard!,
+      data: selectedCard!
     });
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-[.5vw] ">
+    <div className="w-full h-full flex flex-col gap-[.5vw]">
+      <Participants
+        cardId={card as string}
+        isActive={isActive}
+        backCallback={() => setIsActive(false)}
+        alreadyParticipants={contributors}
+        setAlreadyParticipants={setContributors}
+      />
+
       <div className="flex flex-col">
         <div className="flex items-center">
           <div className="flex items-center gap-[.5vw] grow text-darkGray">
@@ -284,8 +304,8 @@ const CardPage = () => {
                                       commentId: comment._id,
                                       data: {
                                         ...comment,
-                                        content: updatedContent,
-                                      },
+                                        content: updatedContent
+                                      }
                                     });
                                   }
                                 }}
@@ -304,7 +324,7 @@ const CardPage = () => {
                                   ) {
                                     credentialsController.commentsDelete({
                                       commentId: comment._id,
-                                      cardId: card as string,
+                                      cardId: card as string
                                     });
                                   }
                                 }}
@@ -365,7 +385,7 @@ const CardPage = () => {
                   // Use the commentsCreate function
                   credentialsController.commentsCreate({
                     cardId: card as string,
-                    content: comment,
+                    content: comment
                   });
 
                   setComment("");
@@ -387,9 +407,7 @@ const CardPage = () => {
             {contributors && contributors?.length > 0 ? (
               <>
                 {contributors.map((cont, idx) => {
-                  return <span key={cont._id + idx}>
-                    {cont.username}
-                  </span>
+                  return <span key={cont._id + idx}>{cont.username}</span>;
                 })}
               </>
             ) : (

@@ -1,7 +1,7 @@
 "use client";
 
 import CardItem from "@/components/CardItem";
-import CreateBoardModal from "@/components/CreateBoardModal";
+import CreateBoardModal from "@/components/Pages/Popup/CreateBoardModal";
 import {
   useCredentialsContext,
   BoardData

@@ -6,6 +6,7 @@ const authLogoutRoute = authRoute + "logout/";
 const authRoleRoute = authRoute + "role/";
 const authUserUpdate = authRoute + "update/";
 const authUserDelete = authRoute + "delete/";
+const authGetAllUsersNameId = authRoute + "users/";
 const boardRoute = mainRoute + "board/";
 const listsRoute = mainRoute + "lists/";
 const cardsRoute = mainRoute + "cards/";
@@ -21,7 +22,8 @@ const apiRoute = {
     deleteRoute: authUserDelete,
     registerRoute: authRegisterRoute,
     logoutRoute: authLogoutRoute,
-    roleRoute: authRoleRoute
+    roleRoute: authRoleRoute,
+    getAllUsersNameIdRoute: authGetAllUsersNameId
   },
   board: {
     mainRoute: boardRoute
