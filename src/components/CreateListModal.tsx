@@ -38,7 +38,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
   return (
     <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center">
       <div className="bg-[#FFFFFF] p-6 rounded-lg w-1/3 border-2 border-darkGray shadow-lg">
-        <h2 className="text-lg font-bold mb-4">Create New List</h2>
+        <h2 className="text-2xl font-bold text-darkGray mb-6 text-center">Create New List</h2>
 
         {/* Input Title */}
         <div className="mb-4">
@@ -51,7 +51,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
             placeholder="Enter list title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="rounded-[.5vw] text-vw-xs text-darkGray px-[.6vw] py-[.4vw] border-lightGray border-[.2vw] outline-none w-full"
           />
         </div>
 
@@ -66,7 +66,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
             placeholder="Enter position"
             value={position}
             onChange={(e) => setPosition(Number(e.target.value))}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="rounded-[.5vw] text-vw-xs text-darkGray px-[.6vw] py-[.4vw] border-lightGray border-[.2vw] outline-none w-full"
           />
         </div>
 
@@ -80,7 +80,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
             type="date" // Mendukung input tanggal
             value={createdAt}
             onChange={(e) => setCreatedAt(e.target.value)} // Update nilai tanggal
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="rounded-[.5vw] text-vw-xs text-darkGray px-[.6vw] py-[.4vw] border-lightGray border-[.2vw] outline-none w-full"
           />
         </div>
 
