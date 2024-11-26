@@ -30,7 +30,6 @@ const RootLayout = ({
       })
       .then((res) => {
         const data = res.data.data as AccountData;
-        console.log(data);
         if (data.role) {
           setAccDataRef.current(data);
         } else {
