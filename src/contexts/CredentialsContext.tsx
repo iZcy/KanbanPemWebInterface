@@ -220,46 +220,44 @@ export const CredentialsProvider = ({
 
     toasterController.confirmationToast.setIsLoading(false);
   };
-  const boardCreate = async (data: {
+  
+  const boardCreate = async ({
+    title,
+    description,
+    visibility
+  }: {
     title: string;
     description: string;
-    visibility: "private" | "public";
-  }): Promise<BoardData | undefined> => {
-    toasterController.callToast({
-      message: "Membuat board...",
-      type: "info"
-    });
-
+    visibility: "private" | "public"
+  }) => {
     try {
       const response = await axios.post(
-        apiRoute.board.mainRoute,
-        {
-          title: data.title,
-          description: data.description,
-          visibility: data.visibility
-        },
-        {
-          withCredentials: true
-        }
+        apiRoute.board.mainRoute, 
+        { title, description, visibility },
+        { withCredentials: true }
       );
-
-      if (response.status === 200) {
-        const newBoard = response.data;
-        toasterController.callToast({
-          message: "Sukses membuat board",
-          type: "success"
-        });
-        boardFetch();
-        return newBoard;
-      }
-    } catch (err) {
-      console.log(err);
+  
+      // Create the new board object from the response
+      const newBoard = response.data.data;
+  
+      // Directly update the local board data state
+      setBoardData(prevBoards => [...prevBoards, newBoard]);
+  
+      // Show success toast
       toasterController.callToast({
-        message: "Error membuat board",
+        message: "Board created successfully",
+        type: "success"
+      });
+  
+      return newBoard;
+    } catch (err) {
+      console.error(err);
+      toasterController.callToast({
+        message: "Error creating board",
         type: "error"
       });
+      return null;
     }
-    return undefined;
   };
 
   const boardSearch = async (query: string) => {

@@ -46,7 +46,7 @@ const BoardPage = () => {
       visibility
     });
     if (newBoard) {
-      credentialsController.boardFetch();
+      boardFetchRef.current(); // Fetch the boards after creating a new board
     }
     setIsModalOpen(false);
   };

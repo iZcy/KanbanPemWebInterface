@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ButtonCustom from "@/components/ButtonCustom";
 
 interface ModalProps {
@@ -16,17 +16,33 @@ const CreateBoardModal = ({ isOpen, onClose, onSave }: ModalProps) => {
   const [description, setDescription] = useState("");
   const [visibility, setVisibility] = useState<"private" | "public">("private");
 
+  // Reset form fields when modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setTitle("");
+      setDescription("");
+      setVisibility("private");
+    }
+  }, [isOpen]);
+
+  // Modify save handler to reset fields after saving
+  const handleSave = () => {
+    onSave(title, description, visibility);
+    
+    // Optional: You can reset fields here as well if needed
+    setTitle("");
+    setDescription("");
+    setVisibility("private");
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center">
-      {/* Modal Content */}
       <div className="bg-[#FFFFFF] p-6 rounded-lg w-1/3 border-2 border-darkGray shadow-lg">
-        {/* Centered Header */}
         <h2 className="text-2xl font-bold text-darkGray mb-6 text-center">
           Create New Board
         </h2>
-        {/* Inputs */}
         <div className="mb-4">
           <label className="font-secondary font-bold text-darkGray mb-1 block">
             Board Name
@@ -65,12 +81,11 @@ const CreateBoardModal = ({ isOpen, onClose, onSave }: ModalProps) => {
             <option value="public">Public</option>
           </select>
         </div>
-        {/* Buttons */}
         <div className="flex justify-end gap-2">
           <ButtonCustom text="Cancel" onClick={onClose} type="secondary" />
           <ButtonCustom
             text="Save"
-            onClick={() => onSave(title, description, visibility)}
+            onClick={handleSave}
             type="primary"
           />
         </div>
