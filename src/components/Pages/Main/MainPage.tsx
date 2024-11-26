@@ -2,7 +2,10 @@
 
 import CardItem from "@/components/CardItem";
 import CreateBoardModal from "@/components/CreateBoardModal";
-import { useCredentialsContext, BoardData } from "@/contexts/CredentialsContext";
+import {
+  useCredentialsContext,
+  BoardData
+} from "@/contexts/CredentialsContext";
 import { enumVisibility } from "@/helper/typesEnums";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -26,10 +29,18 @@ const BoardPage = () => {
     setBoards(credentialsController.boardData);
   }, [credentialsController.boardData]);
 
-  const handleCreateBoard = async (title: string, description: string, visibility: "private" | "public") => {
-    const newBoard = await credentialsController.boardCreate({ title, description, visibility });
+  const handleCreateBoard = async (
+    title: string,
+    description: string,
+    visibility: "private" | "public"
+  ) => {
+    const newBoard = await credentialsController.boardCreate({
+      title,
+      description,
+      visibility
+    });
     if (newBoard) {
-      setBoards(prevBoards => [...prevBoards, newBoard]);
+      setBoards((prevBoards) => [...prevBoards, newBoard]);
     }
     setIsModalOpen(false);
   };
@@ -37,7 +48,11 @@ const BoardPage = () => {
   return (
     <div className="w-full h-full">
       {/* Wrapper for content, apply blur when modal is open */}
-      <div className={`transition-filter duration-300 ${isModalOpen ? "blur-md" : ""}`}>
+      <div
+        className={`transition-filter duration-300 ${
+          isModalOpen ? "blur-md" : ""
+        }`}
+      >
         <div className="w-full h-full flex flex-col gap-[.5vw]">
           <div className="flex text-darkGray items-center">
             <div className="flex items-center gap-[.5vw] grow">
@@ -51,14 +66,14 @@ const BoardPage = () => {
               <p className="font-secondary text-vw-md">
                 Halo,
                 <span className="font-bold">
-                  {" " + (credentialsController.accData?.username || "Guest") + "!"}
+                  {" " +
+                    (credentialsController.accData?.username || "Guest") +
+                    "!"}
                 </span>
               </p>
             </div>
           </div>
-          <SearchAndLog
-              placeholder="Search board..."
-            />
+          <SearchAndLog placeholder="Search board..." noBack={true} />
           <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw]">
             {boards.map((board, index) => (
               <CardItem
