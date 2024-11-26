@@ -52,8 +52,6 @@ const CardPage = () => {
   const [isEditingDeadline, setIsEditingDeadline] = useState(false);
   const [newDueDate, setNewDueDate] = useState(valDue?.split("T")[0] || "");
 
-  const [username, setUsername] = useState("");
-
   const handleAddUser = async () => {
     setIsActive(true);
     // try {
@@ -160,7 +158,7 @@ const CardPage = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-[.5vw]">
+    <div className="w-full h-full flex flex-col gap-[.5vw] overflow-y-clip">
       <Participants
         cardId={card as string}
         isActive={isActive}
@@ -217,8 +215,8 @@ const CardPage = () => {
           {selectedBoard?.title + " / " + selectedList?.title}
         </p>
       </div>
-      <div className="w-full h-full flex-col flex gap-[1vw] ">
-        <div className="w-full h-full flex gap-[1vw]">
+      <div className="w-full grow flex-col flex gap-[1vw] ">
+        <div className="w-full h-[63vh] flex gap-[1vw]">
           <div className="w-6/12 h-full flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] grow">
             <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
               Description
