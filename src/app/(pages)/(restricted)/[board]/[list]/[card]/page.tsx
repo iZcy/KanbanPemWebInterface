@@ -139,12 +139,12 @@ const CardPage = () => {
   };
 
   const handleCommentDelete = (commentId: string) => {
-    if (confirm("Are you sure you want to delete this comment?")) {
+    // if (confirm("Are you sure you want to delete this comment?")) {
       credentialsController.commentsDelete({
         commentId,
         cardId: card as string
       });
-    }
+    // }
   };
 
   return (
@@ -282,7 +282,13 @@ const CardPage = () => {
                               <AiFillDelete
                                 className="text-darkGray cursor-pointer"
                                 onClick={() =>
-                                  handleCommentDelete(comment._id || "")
+                                  toasterController.confirmationToast.createConfirmation({
+                                    message: "Hapus komentar?",
+                                    onYes: () => {
+                                    handleCommentDelete(comment._id || "")
+                                    }
+                                  })
+                                  // handleCommentDelete(comment._id || "")
                                 }
                               />
                             </div>
