@@ -30,7 +30,7 @@ export interface BoardData {
 }
 // export type { BoardData };
 
-interface ListData {
+export interface ListData {
   _id: string;
   title: string;
   boardId: string;
@@ -76,7 +76,7 @@ interface CredentialsFlowController {
   setLookingList: React.Dispatch<React.SetStateAction<ListData | null>>;
   listsFetch: ({ boardId }: { boardId: string }) => void;
   listsCreate: ({ boardId }: { boardId: string }) => void;
-  listsUpdate: ({ listId, data }: { listId: string; data: ListData }) => void;
+  listsUpdate: (data: ListData) => void;
   listsDelete: ({ listId }: { listId: string }) => void;
   cardsData: CardData[];
   lookingCard: CardData | null;
@@ -379,21 +379,15 @@ export const CredentialsProvider = ({
       });
   };
 
-  const listsUpdate = ({
-    listId,
-    data
-  }: {
-    listId: string;
-    data: ListData;
-  }) => {
+  const listsUpdate = (data: ListData) => {
     toasterController.callToast({
-      message: "Mengupdate list...",
+      message: "Mengupdate List...",
       type: "info"
     });
 
     axios
       .patch(
-        apiRoute.lists.mainRoute + listId,
+        apiRoute.lists.mainRoute + data._id,
         {
           title: data.title,
           boardId: data.boardId,
@@ -405,7 +399,7 @@ export const CredentialsProvider = ({
       )
       .then(() => {
         toasterController.callToast({
-          message: "Sukses mengupdate list",
+          message: "Sukses mengupdate List",
           type: "success"
         });
 
