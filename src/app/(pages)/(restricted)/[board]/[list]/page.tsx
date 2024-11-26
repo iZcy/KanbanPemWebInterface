@@ -1,17 +1,19 @@
 "use client";
 
+import apiRoute from "@/api/routes";
 import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
-import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { ListData, useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
+import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
   const router = useRouter();
-
   const { list } = useParams();
+
   const credentialsController = useCredentialsContext();
   const toasterController = useToasterContext();
 
@@ -24,11 +26,28 @@ const KanbanPage = () => {
 
   const progressList = ["to-do", "in-progress", "done"];
 
-  const selectedList = credentialsController.lookingList;
-  const selectedBoard = credentialsController.lookingBoard;
+  const [selectedList, setSelectedList] = useState(
+    credentialsController.lookingList
+  );
+
+  const [presentTitle, setPresentTitle] = useState(selectedList?.title);
+
+  useEffect(() => {
+    axios
+      .get(apiRoute.lists.singleRoute + list, {
+        withCredentials: true
+      })
+      .then((res) => {
+        const data = res.data.data as ListData;
+        setSelectedList(data);
+        setPresentTitle(data.title);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [list]);
 
   const [titleListEditMode, setListTitleEditMode] = useState(false);
-  const [presentTitle, setPresentTitle] = useState(selectedList?.title);
 
   const handleListTitleUpdate = () => {
     setListTitleEditMode(false);
@@ -46,7 +65,7 @@ const KanbanPage = () => {
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
-        {titleListEditMode ? (
+          {titleListEditMode ? (
             <input
               type="text"
               value={presentTitle}
@@ -61,12 +80,12 @@ const KanbanPage = () => {
             />
           ) : (
             <p
-            className="font-primary font-bold text-vw-md cursor-pointer"
-            onClick={() => setListTitleEditMode(true)}
-          >
-            {presentTitle}
-          </p>
-        )}
+              className="font-primary font-bold text-vw-md cursor-pointer"
+              onClick={() => setListTitleEditMode(true)}
+            >
+              {presentTitle}
+            </p>
+          )}
 
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"

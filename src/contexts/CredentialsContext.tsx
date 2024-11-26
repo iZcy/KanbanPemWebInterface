@@ -53,7 +53,7 @@ export interface ListData {
   createdAt?: string;
 }
 
-interface CardData {
+export interface CardData {
   _id: string;
   title: string;
   listId: string;
@@ -116,7 +116,7 @@ interface CredentialsFlowController {
   lookingList: ListData | null;
   setLookingList: React.Dispatch<React.SetStateAction<ListData | null>>;
   listsFetch: ({ boardId }: { boardId: string }) => void;
-  listsCreate: ({ boardId, data }: { boardId: string, data: ListData }) => void;
+  listsCreate: ({ boardId, data }: { boardId: string; data: ListData }) => void;
   listsUpdate: (data: ListData) => void;
   listsDelete: ({ listId }: { listId: string }) => void;
   cardsData: CardData[];
@@ -220,7 +220,7 @@ export const CredentialsProvider = ({
 
     toasterController.confirmationToast.setIsLoading(false);
   };
-  
+
   const boardCreate = async ({
     title,
     description,
@@ -228,27 +228,27 @@ export const CredentialsProvider = ({
   }: {
     title: string;
     description: string;
-    visibility: "private" | "public"
+    visibility: "private" | "public";
   }) => {
     try {
       const response = await axios.post(
-        apiRoute.board.mainRoute, 
+        apiRoute.board.mainRoute,
         { title, description, visibility },
         { withCredentials: true }
       );
-  
+
       // Create the new board object from the response
       const newBoard = response.data.data;
-  
+
       // Directly update the local board data state
-      setBoardData(prevBoards => [...prevBoards, newBoard]);
-  
+      setBoardData((prevBoards) => [...prevBoards, newBoard]);
+
       // Show success toast
       toasterController.callToast({
         message: "Board created successfully",
         type: "success"
       });
-  
+
       return newBoard;
     } catch (err) {
       console.error(err);
@@ -266,17 +266,20 @@ export const CredentialsProvider = ({
       boardFetch();
       return;
     }
-  
+
     toasterController.callToast({
       message: "Mencari board...",
       type: "info"
     });
-  
+
     try {
-      const response = await axios.get(`${apiRoute.board.mainRoute}?search=${query}`, {
-        withCredentials: true
-      });
-  
+      const response = await axios.get(
+        `${apiRoute.board.mainRoute}?search=${query}`,
+        {
+          withCredentials: true
+        }
+      );
+
       if (response.status === 200) {
         const boardData = response.data.data as BoardData[];
         setBoardData(boardData);
@@ -388,11 +391,17 @@ export const CredentialsProvider = ({
       });
   };
 
-  const listsCreate = ({ boardId, data = {
-    title: "New List",
-    boardId: "New List Board",
-    position: 0
-  } }: { boardId: string, data: ListData }) => {
+  const listsCreate = ({
+    boardId,
+    data = {
+      title: "New List",
+      boardId: "New List Board",
+      position: 0
+    }
+  }: {
+    boardId: string;
+    data: ListData;
+  }) => {
     toasterController.callToast({
       message: "Membuat list...",
       type: "info"

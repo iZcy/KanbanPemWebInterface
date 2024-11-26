@@ -1,9 +1,14 @@
 "use client";
 
+import apiRoute from "@/api/routes";
 import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
-import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import {
+  BoardData,
+  useCredentialsContext
+} from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
+import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
@@ -11,13 +16,36 @@ import CreateListModal from "@/components/CreateListModal"; // Import the Create
 
 const ListPage = () => {
   const router = useRouter();
+
   const { board } = useParams();
   const credentialsController = useCredentialsContext();
   const toasterController = useToasterContext();
 
   const listFetchRef = useRef(credentialsController.listsFetch);
 
-  const selectedBoard = credentialsController.lookingBoard;
+  const [selectedBoard, setSelectedBoard] = useState(
+    credentialsController.lookingBoard
+  );
+  const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
+  const [presentDescription, setPresentDescription] = useState(
+    selectedBoard?.description
+  );
+
+  useEffect(() => {
+    axios
+      .get(apiRoute.board.singleRoute + board, {
+        withCredentials: true
+      })
+      .then((res) => {
+        const data = res.data.data as BoardData;
+        setSelectedBoard(data);
+        setPresentDescription(data.description);
+        setPresentTitle(data.title);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [board]);
 
   useEffect(() => {
     listFetchRef.current({
@@ -26,12 +54,8 @@ const ListPage = () => {
   }, [board]);
 
   const [titleEditMode, setTitleEditMode] = useState(false);
-  const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
 
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);
-  const [presentDescription, setPresentDescription] = useState(
-    selectedBoard?.description
-  );
 
   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
@@ -70,7 +94,7 @@ const ListPage = () => {
       title,
       position,
       boardId: board as string
-    }
+    };
 
     credentialsController.listsCreate({
       boardId: board as string,

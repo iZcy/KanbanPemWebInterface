@@ -8,8 +8,11 @@ const authUserUpdate = authRoute + "update/";
 const authUserDelete = authRoute + "delete/";
 const authGetAllUsersNameId = authRoute + "users/";
 const boardRoute = mainRoute + "board/";
+const boardSingleRoute = boardRoute + "single/";
 const listsRoute = mainRoute + "lists/";
+const listsSingleRoute = listsRoute + "single/";
 const cardsRoute = mainRoute + "cards/";
+const cardsSingleRoute = cardsRoute + "card/";
 const cardsCollabRoute = cardsRoute + "collab/";
 const commentsRoute = mainRoute + "comments/";
 
@@ -26,14 +29,17 @@ const apiRoute = {
     getAllUsersNameIdRoute: authGetAllUsersNameId
   },
   board: {
-    mainRoute: boardRoute
+    mainRoute: boardRoute,
+    singleRoute: boardSingleRoute
   },
   lists: {
-    mainRoute: listsRoute
+    mainRoute: listsRoute,
+    singleRoute: listsSingleRoute
   },
   cards: {
     mainRoute: cardsRoute,
-    collab: cardsCollabRoute
+    collab: cardsCollabRoute,
+    singleRoute: cardsSingleRoute
   },
   comments: {
     mainRoute: commentsRoute

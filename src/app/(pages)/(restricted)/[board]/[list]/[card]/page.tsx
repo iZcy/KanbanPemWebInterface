@@ -5,6 +5,7 @@ import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
 import Participants from "@/components/Pages/Popup/Participants";
 import {
+  CardData,
   ContributorData,
   useCredentialsContext
 } from "@/contexts/CredentialsContext";
@@ -17,7 +18,7 @@ import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 
 const CardPage = () => {
   const router = useRouter();
-
+  const params = useParams();
   const { card } = useParams();
   const [isActive, setIsActive] = useState(false);
   const [comment, setComment] = useState("");
@@ -32,25 +33,83 @@ const CardPage = () => {
     });
   }, [card]);
 
-  const selectedBoard = credentialsController.lookingBoard;
-  const selectedList = credentialsController.lookingList;
-  const selectedCard = credentialsController.lookingCard;
-  const valCreated = selectedCard?.createdAt;
-  const valDue = selectedCard?.dueDate;
+  const [selectedCard, setSelectedCard] = useState(
+    credentialsController.lookingCard
+  );
 
-  const [isEditing, setIsEditing] = useState(false);
+  const [selectedList, setSelectedList] = useState(
+    credentialsController.lookingList
+  );
+
+  const [selectedBoard, setSelectedBoard] = useState(
+    credentialsController.lookingBoard
+  );
+
+  const [valCreated, setValCreated] = useState(selectedCard?.createdAt);
+  const [valDue, setValDue] = useState(selectedCard?.dueDate);
   const [newTitle, setNewTitle] = useState(selectedCard?.title || "");
-
-  const [descriptionEditMode, setDescriptionEditMode] = useState(false);
   const [presentDescription, setPresentDescription] = useState(
     selectedCard?.description
   );
   const [contributors, setContributors] = useState<ContributorData[]>(
     selectedCard?.assignedTo || []
   );
+  const [newDueDate, setNewDueDate] = useState(valDue?.split("T")[0] || "");
+
+  useEffect(() => {
+    axios
+      .get(apiRoute.cards.singleRoute + card, {
+        withCredentials: true
+      })
+      .then((res) => {
+        const data = res.data.data as CardData;
+
+        setSelectedCard(data);
+
+        setValCreated(data.createdAt);
+
+        setValDue(data.dueDate);
+
+        setNewTitle(data.title);
+
+        setPresentDescription(data.description);
+
+        setContributors(data.assignedTo);
+
+        setNewDueDate(data.dueDate?.split("T")[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get(apiRoute.lists.singleRoute + params.list, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedList(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    axios
+      .get(apiRoute.board.singleRoute + params.board, {
+        withCredentials: true
+      })
+      .then((res) => {
+        setSelectedBoard(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [params.list, params.board, card]);
+
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [descriptionEditMode, setDescriptionEditMode] = useState(false);
 
   const [isEditingDeadline, setIsEditingDeadline] = useState(false);
-  const [newDueDate, setNewDueDate] = useState(valDue?.split("T")[0] || "");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -140,10 +199,10 @@ const CardPage = () => {
 
   const handleCommentDelete = (commentId: string) => {
     // if (confirm("Are you sure you want to delete this comment?")) {
-      credentialsController.commentsDelete({
-        commentId,
-        cardId: card as string
-      });
+    credentialsController.commentsDelete({
+      commentId,
+      cardId: card as string
+    });
     // }
   };
 
@@ -183,6 +242,43 @@ const CardPage = () => {
             )}
           </div>
           <div className="flex gap-[.5vw]">
+            <ButtonCustom
+              onClick={() => {
+                toasterController.confirmationToast.createConfirmation({
+                  message: "Menghapus Card " + selectedCard?.title,
+                  onYes: () => {
+                    axios
+                      .delete(apiRoute.cards.mainRoute + card, {
+                        withCredentials: true
+                      })
+                      .then(() => {
+                        toasterController.callToast({
+                          message:
+                            "Card " +
+                            selectedCard?.title +
+                            " is successfully removed",
+                          type: "success"
+                        });
+                        router.replace("/" + params.board + "/" + params.list);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        toasterController.callToast({
+                          message:
+                            "Collaborator " +
+                            selectedCard?.title +
+                            " is failed to be removed",
+                          type: "error"
+                        });
+                      });
+                  }
+                });
+              }}
+              text="Delete"
+              type="primary"
+              classNameDiv="w-fit"
+              classNameInput="w-full"
+            />
             <ButtonCustom
               onClick={() => {}}
               text="Status"
@@ -281,13 +377,18 @@ const CardPage = () => {
                               />
                               <AiFillDelete
                                 className="text-darkGray cursor-pointer"
-                                onClick={() =>
-                                  toasterController.confirmationToast.createConfirmation({
-                                    message: "Hapus komentar?",
-                                    onYes: () => {
-                                    handleCommentDelete(comment._id || "")
-                                    }
-                                  })
+                                onClick={
+                                  () =>
+                                    toasterController.confirmationToast.createConfirmation(
+                                      {
+                                        message: "Hapus komentar?",
+                                        onYes: () => {
+                                          handleCommentDelete(
+                                            comment._id || ""
+                                          );
+                                        }
+                                      }
+                                    )
                                   // handleCommentDelete(comment._id || "")
                                 }
                               />
@@ -381,37 +482,40 @@ const CardPage = () => {
                           message: "Hapus contributor?",
                           onYes: () => {
                             axios
-                          .delete(apiRoute.cards.collab + selectedCard?._id, {
-                            data: { userId: cont?._id },
-                            withCredentials: true
-                          })
-                          .then(() => {
-                            // remove from list
-                            const newContributors = contributors.filter(
-                              (con) => con._id !== cont?._id
-                            );
-                            setContributors(newContributors);
+                              .delete(
+                                apiRoute.cards.collab + selectedCard?._id,
+                                {
+                                  data: { userId: cont?._id },
+                                  withCredentials: true
+                                }
+                              )
+                              .then(() => {
+                                // remove from list
+                                const newContributors = contributors.filter(
+                                  (con) => con._id !== cont?._id
+                                );
+                                setContributors(newContributors);
 
-                            // Toast
-                            toasterController.callToast({
-                              message:
-                                "Collaborator " +
-                                cont?.username +
-                                " is successfully removed",
-                              type: "success"
-                            });
-                          })
-                          .catch((err) => {
-                            // show error
-                            console.log(err);
-                            // Toast
-                            toasterController.callToast({
-                              message: "Collaborator removal error: " + err,
-                              type: "error"
-                            });
-                          });
+                                // Toast
+                                toasterController.callToast({
+                                  message:
+                                    "Collaborator " +
+                                    cont?.username +
+                                    " is successfully removed",
+                                  type: "success"
+                                });
+                              })
+                              .catch((err) => {
+                                // show error
+                                console.log(err);
+                                // Toast
+                                toasterController.callToast({
+                                  message: "Collaborator removal error: " + err,
+                                  type: "error"
+                                });
+                              });
                           }
-                        })
+                        });
                         // axios
                         //   .delete(apiRoute.cards.collab + selectedCard?._id, {
                         //     data: { userId: cont?._id },
