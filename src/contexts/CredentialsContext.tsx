@@ -721,7 +721,7 @@ export const CredentialsProvider = ({
         } else {
           console.error("Card ID is missing. Can't refetch comments");
         }
-        // commentsFetch({ cardId: lookingCard?._id || "" });
+        commentsFetch({ cardId: lookingCard?._id || "" });
       })
       .catch((err) => {
         console.log(err);
