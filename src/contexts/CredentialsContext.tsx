@@ -13,11 +13,21 @@ interface AuthBody {
   setDisabled: (value: boolean) => void;
 }
 
-export interface AccountData {
-  _id: string;
+export type Role = "guest" | "member" | "admin" | "none";
+
+export interface BasicUserData {
   email: string;
   username: string;
-  role: "guest" | "member" | "admin";
+  role: Role;
+}
+
+export interface AccountData extends BasicUserData {
+  _id: string;
+}
+
+export interface RegData extends BasicUserData {
+  password: string;
+  confirmPassword: string;
 }
 
 export interface BoardData {
@@ -60,6 +70,13 @@ interface CommentsData {
 interface CredentialsFlowController {
   loginAction: (param: AuthBody) => void;
   logoutAction: () => void;
+  registerAction: ({
+    reg,
+    setDisabled
+  }: {
+    reg: RegData;
+    setDisabled: (val: boolean) => void;
+  }) => void;
   roleAction: () => boolean;
   accData: AccountData | null;
   setAccData: (data: AccountData | null) => void;
@@ -817,12 +834,71 @@ export const CredentialsProvider = ({
       });
   };
 
+  const registerAction = ({
+    reg,
+    setDisabled
+  }: {
+    reg: RegData;
+    setDisabled: (val: boolean) => void;
+  }) => {
+    // Reject if password and confirm password is not the same
+    if (reg.password !== reg.confirmPassword) {
+      toasterController.callToast({
+        message: "Password dan Konfirmasi Password tidak sama",
+        type: "error"
+      });
+      return;
+    }
+
+    // inform loading
+    toasterController.callToast({
+      message: "Sedang memproses...",
+      type: "info"
+    });
+    setDisabled(true);
+
+    axios
+      .post(
+        apiRoute.auth.registerRoute,
+        {
+          email: reg.email,
+          password: reg.password,
+          username: reg.username,
+          role: reg.role
+        },
+        {
+          withCredentials: true
+        }
+      )
+      .then(() => {
+        // inform success
+        toasterController.callToast({
+          message: "Berhasil mendaftar",
+          type: "success"
+        });
+
+        // redirect to home
+        router.push("/auth");
+      })
+      .catch((err) => {
+        // Inform
+        toasterController.callToast({
+          message: "Gagal mendaftar " + err?.response?.data?.message,
+          type: "error"
+        });
+        console.log(err);
+
+        setDisabled(false);
+      });
+  };
+
   return (
     <CredentialsContext.Provider
       value={{
         boardSearch,
         loginAction,
         logoutAction,
+        registerAction,
         roleAction,
         accData,
         setAccData,
