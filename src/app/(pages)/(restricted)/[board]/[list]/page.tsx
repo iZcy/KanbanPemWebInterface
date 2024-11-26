@@ -7,92 +7,50 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
-const ListPage = () => {
+const KanbanPage = () => {
   const router = useRouter();
-  const { board } = useParams();
+
+  const { list } = useParams();
   const credentialsController = useCredentialsContext();
 
-  const listFetchRef = useRef(credentialsController.listsFetch);
+  const cardsFetchRef = useRef(credentialsController.cardsFetch);
+  useEffect(() => {
+    cardsFetchRef.current({
+      listId: list as string
+    });
+  }, [list]);
 
+  const progressList = ["to-do", "in-progress", "done"];
+
+  const selectedList = credentialsController.lookingList;
   const selectedBoard = credentialsController.lookingBoard;
 
-  useEffect(() => {
-    listFetchRef.current({
-      boardId: board as string
-    });
-  }, [board]);
-
-  const [titleEditMode, setTitleEditMode] = useState(false);
-  const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
-
-  const [descriptionEditMode, setDescriptionEditMode] = useState(false);
-  const [presentDescription, setPresentDescription] = useState(
-    selectedBoard?.description
-  );
-
-  const handleTitleUpdate = () => {
-    setTitleEditMode(false);
-    const currentData = credentialsController.lookingBoard;
-    credentialsController.boardUpdate({
-      title: presentTitle || "",
-      _id: currentData?._id || "",
-      description: currentData?.description || "",
-      visibility: currentData?.visibility || "private",
-      createdAt: currentData?.createdAt || "",
-      userId: currentData?.userId || ""
-    });
-  };
-
-  const handleDescriptionUpdate = () => {
-    setDescriptionEditMode(false);
-    const currentData = credentialsController.lookingBoard;
-    credentialsController.boardUpdate({
-      title: currentData?.title || "",
-      _id: currentData?._id || "",
-      description: presentDescription || "",
-      visibility: currentData?.visibility || "private",
-      createdAt: currentData?.createdAt || "",
-      userId: currentData?.userId || ""
-    });
-  };
+  const [listTitleEditMode, setListTitleEditMode] = useState(false);
+  const [presentListTitle, setPresentListTitle] = useState(selectedList?.title);
 
   return (
-    <div className="w-full h-full flex flex-col gap-[.5vw] overflow-clip">
+    <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
-          {titleEditMode ? (
-            <input
-              type="text"
-              value={presentTitle}
-              onChange={(e) => setPresentTitle(e.target.value)}
-              onBlur={handleTitleUpdate}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleTitleUpdate();
-                }
-              }}
-              className="font-primary font-bold text-vw-md"
-            />
-          ) : (
-            <p
-              className="font-primary font-bold text-vw-md cursor-pointer"
-              onClick={() => setTitleEditMode(true)}
-            >
-              {presentTitle}
-            </p>
-          )}
-          <p className="font-primary text-vw-md">{" / Select List"}</p>
+          <p className="font-primary font-bold text-vw-md">
+            {selectedBoard?.title + " / " + selectedList?.title}
+          </p>
+        
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
-            onClick={() => {
-              credentialsController.boardDelete({ boardId: board as string });
-            }}
+            onClick={() =>
+              credentialsController.listsDelete({
+                listId: list as string
+              })
+            }
           />
           <HiPlusCircle
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
-            onClick={() => {
-              credentialsController.listsCreate({ boardId: board as string });
-            }}
+            onClick={() =>
+              credentialsController.cardsCreate({
+                listId: list as string
+              })
+            }
           />
         </div>
         <div className="flex items-center gap-[.5vw] font-secondary">
@@ -104,46 +62,56 @@ const ListPage = () => {
           </p>
         </div>
       </div>
-      <div className="flex items-center gap-[.5vw] font-secondary">
-        {descriptionEditMode ? (
-          <input
-            type="text"
-            value={presentDescription}
-            onChange={(e) => setPresentDescription(e.target.value)}
-            onBlur={handleDescriptionUpdate}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleDescriptionUpdate();
-              }
-            }}
-            className="font-secondary text-vw-xs text-darkGray font-bold"
-          />
-        ) : (
-          <p
-            className="font-secondary text-vw-xs text-darkGray font-bold cursor-pointer"
-            onClick={() => setDescriptionEditMode(true)}
+      <SearchAndLog placeholder={"Search card..."} />
+      <div className="w-full h-[70vh] flex gap-[1vw]">
+        {progressList.map((prog, idx) => (
+          <div
+            key={idx}
+            className="w-4/12 h-full flex-col flex gap-[1vw] mt-[2.5vw] rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] grow overflow-hidden"
           >
-            {presentDescription || "Click to add description"}
-          </p>
-        )}
-      </div>
-      <SearchAndLog placeholder="Search list..." />
-      <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] overflow-y-scroll h-full">
-        {credentialsController.listsData.map((list, index) => (
-          <CardItem
-            key={index}
-            title={list.title}
-            onClick={() => {
-              credentialsController.setLookingList(list);
-              router.push(`${board}/${list._id}`);
-            }}
-            createdAt={list.createdAt}
-            cardType="list"
-          />
+            <div className="flex flex-col items-center">
+              <p className="font-secondary font-bold text-vw-md text-darkGray text-center">
+                {prog
+                  .split("-")
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join("-")}
+              </p>
+              <div className="bg-darkGray w-full h-[.3vw]" />
+            </div>
+            <div className="flex flex-col gap-[1vw] overflow-y-scroll">
+              {credentialsController.cardsData
+                .filter((card) => card.status === prog)
+                .map((crd, index) => {
+                  const valCreate = new Date(crd.createdAt);
+                  const valDue = new Date(crd.dueDate);
+
+                  return (
+                    <CardItem
+                      key={index}
+                      title={crd.title}
+                      onClick={() => {
+                        // set current card
+                        credentialsController.setLookingCard(crd);
+                        // take current link and add card id
+                        const currentLink = window.location.href;
+                        // add with card id
+                        router.push(`${currentLink}/${crd._id}`);
+                      }}
+                      createdAt={`${valCreate.getDate()}/${valCreate.getMonth()}/${valCreate.getFullYear()}`}
+                      // createdBy="Benaya Imanuela"
+                      dueDate={`${valDue.getDate()}/${valDue.getMonth()}/${valDue.getFullYear()}`}
+                      description={crd.description}
+                      cardType="card"
+                      width="grow"
+                    />
+                  );
+                })}
+            </div>
+          </div>
         ))}
       </div>
     </div>
   );
 };
 
-export default ListPage;
+export default KanbanPage;
