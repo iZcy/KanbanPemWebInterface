@@ -1,12 +1,15 @@
 "use client";
 
+import apiRoute from "@/api/routes";
 import ButtonCustom from "@/components/ButtonCustom";
 import InputCustom from "@/components/InputCustom";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import axios from "axios";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState} from "react";
 import { AiFillEdit } from "react-icons/ai";
+// import { CardData } from "@/contexts/CredentialsContext";
 
 const CardPage = () => {
   const router = useRouter();
@@ -30,12 +33,86 @@ const CardPage = () => {
   const valCreated = selectedCard?.createdAt;
   const valDue = selectedCard?.dueDate;
 
-  const [isEditing, setIsEditing] = useState(false); // State untuk mode edit
+  const [isEditing, setIsEditing] = useState(false); 
   const [newTitle, setNewTitle] = useState(selectedCard?.title || "");
 
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);
   const [presentDescription, setPresentDescription] = useState(selectedCard?.description);
+  const [contributors, setContributors] = useState<string[]>([]);
 
+  const [username, setUsername] = useState(""); 
+
+  // const handleAddUser = async () => {
+  //   try {
+  //     axios.post(apiRoute.cards.addCollab + card, {
+  //       userId: username
+  //     }, {
+  //       withCredentials: true
+  //     }).then(() => {
+  //       console.log("Success");
+  //     }).catch(() => {
+  //       console.log("Failed");
+  //     });
+
+  //     setContributors(prev => {
+  //       return [...prev, username]; // Tambah contributor baru ke daftar
+  //     });
+
+  //     setUsername("");
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
+
+  const handleAddUser = async () => {
+    try {
+      const response = await axios.post(
+        `${apiRoute.cards.addCollab}${card}`, // Endpoint API
+        { userId: username }, // Data body
+        { withCredentials: true } // Opsi credentials
+      );
+  
+      // Log respons untuk memastikan `username` diterima
+      console.log("API Response:", response.data);
+  
+      // Ambil username dari respons
+      const addedUsername = response.data.username;
+  
+      // Tambahkan username ke state contributors
+      setContributors((prev) => {
+        const updatedContributors = [...prev, addedUsername];
+        console.log("Updated contributors:", updatedContributors);
+        return updatedContributors;
+      });
+      
+  
+      // Reset input field
+      setUsername('');
+      console.log('Contributor added:', addedUsername);
+    } catch (err) {
+      console.error('Error adding contributor:', err);
+    }
+  };
+  
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        // const res = await fetch("/api/users");
+        // const data = await res.json();
+        // setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+  
+    fetchUsers();
+  }, []);
+
+  useEffect(() => { if (selectedCard) { 
+    setPresentDescription(selectedCard.description);
+  } 
+  }, [selectedCard]);
 
   const handleTitleUpdate = () => {
     setIsEditing(false);
@@ -48,13 +125,24 @@ const CardPage = () => {
 
   const handleDescriptionUpdate = () => {
     setDescriptionEditMode(false);
-    selectedCard!.description = presentDescription!;
-    credentialsController.cardsUpdate({
-      cardId: selectedCard!._id,
-      data: selectedCard!
-    });
+    if (selectedCard) {
+      selectedCard.description = presentDescription!;
+      console.log("Updating card:", selectedCard);
+      
+      try {
+        credentialsController.cardsUpdate({
+          cardId: selectedCard._id,
+          data: selectedCard
+        });
+        console.log("Update successful");
+      } catch (error) {
+        console.error("Update failed:", error);
+      }
+    } else {
+      console.error("Selected card is null or undefined");
+    }
   };
-
+  
   return (
     <div className="w-full h-full flex flex-col gap-[.5vw] ">
       <div className="flex flex-col">
@@ -121,11 +209,12 @@ const CardPage = () => {
             </p>
             {descriptionEditMode ? (
               <textarea
+                value={presentDescription}
                 onChange={(e) => setPresentDescription(e.target.value)}
                 onBlur={handleDescriptionUpdate}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleDescriptionUpdate();
+                  if (e.key === "Enter" && !e.shiftKey) { 
+                    e.preventDefault(); 
                   }
                 }}
                 rows={20}
@@ -137,7 +226,7 @@ const CardPage = () => {
                 className="font-secondary text-vw-xs text-darkGray w-full text-justify"
                 onClick={() => setDescriptionEditMode(true)}
               >
-                {presentDescription || "Click to add description"}
+                {selectedCard?.description}
               </p>
             )}
           </div>
@@ -206,24 +295,41 @@ const CardPage = () => {
           </div>
         </div>
         <div className="w-full h-fit flex items-center p-[1vw] rounded-[.6vw] border-darkGray border-[.2vw] gap-[1vw]">
-          <p className="font-secondary text-vw-sm font-bold text-darkGray">
-            Contributors
-          </p>
-          <div className="w-full flex text-darkGray text-vw-xs gap-[.5vw]">
-            {selectedCard?.assignedTo.map((cont, idx) => (
-              <p key={idx}>
-                {cont + (idx + 1 < selectedCard?.assignedTo.length ? "," : "")}
-              </p>
-            ))}
-          </div>
-          <ButtonCustom
-            onClick={() => {}}
-            text="Add"
-            type="primary"
-            classNameDiv="w-fit"
-            classNameInput="w-full"
-          />
-        </div>
+  <p className="font-secondary text-vw-sm font-bold text-darkGray">
+    Contributors
+  </p>
+  <div className="w-full flex flex-wrap text-darkGray text-vw-xs gap-[.5vw]">
+    {/* Render contributors here */}
+    {contributors.length > 0 ? (
+    contributors.map((contributor, idx) => (
+      <span key={idx} className="flex items-center gap-[.5vw]">
+        {contributor}
+      </span>
+    ))
+  ) : (
+    <span>No contributors added yet.</span> // Menampilkan pesan jika tidak ada contributor
+  )}
+  </div>
+  <div className="flex gap-[.5vw]">
+    <InputCustom
+      type="text"
+      placeholder="Add contributor..."
+      value={username}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(e.target.value);
+      }}
+  classNameDiv="w-fit"
+  classNameInput="w-[200px] border-darkGray h-[50px] text-[16px]"
+/>
+    <ButtonCustom
+      onClick={handleAddUser}
+      text="Add"
+      type="primary"
+      classNameDiv="w-fit"
+      classNameInput="w-full"
+    />
+  </div>
+    </div>
         <div className="w-fit h-fit flex gap-[1vw]">
           <p className="font-secondary text-vw-xs text-darkGray">
             created at:{" "}
@@ -235,7 +341,7 @@ const CardPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )};
+
 
 export default CardPage;

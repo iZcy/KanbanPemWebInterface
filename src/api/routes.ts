@@ -6,6 +6,7 @@ const authRoleRoute = authRoute + "role/";
 const boardRoute = mainRoute + "board/";
 const listsRoute = mainRoute + "lists/";
 const cardsRoute = mainRoute + "cards/";
+const cardsAddCollabRoute = cardsRoute + "addcollab/";
 const commentsRoute = mainRoute + "comments/";
 
 const apiRoute = {
@@ -23,7 +24,8 @@ const apiRoute = {
     mainRoute: listsRoute
   },
   cards: {
-    mainRoute: cardsRoute
+    mainRoute: cardsRoute,
+    addCollab: cardsAddCollabRoute
   },
   comments: {
     mainRoute: commentsRoute
