@@ -36,6 +36,13 @@ export interface ListData {
   boardId: string;
   position: number;
   createdAt: string;
+  assignedTo: CollaboratorData[]; // Properti baru untuk kolaborator
+}
+
+export interface CollaboratorData {
+  _id: string;
+  username: string;
+  email: string;
 }
 
 interface CardData {
@@ -101,7 +108,7 @@ interface CredentialsFlowController {
     commentId: string;
     data: CommentsData;
   }) => void;
-  commentsDelete: ({ commentId, cardId }: { commentId: string; cardId: string }) => void;
+  commentsDelete: ({ commentId }: { commentId: string }) => void;
   emptyAll: () => void;
 }
 
@@ -319,30 +326,35 @@ export const CredentialsProvider = ({
   const listsFetch = ({ boardId }: { boardId: string }) => {
     toasterController.callToast({
       message: "Mengambil data list...",
-      type: "info"
+      type: "info",
     });
-
+  
     axios
       .get(apiRoute.lists.mainRoute + boardId, {
-        withCredentials: true
+        withCredentials: true,
       })
       .then((res) => {
-        const listsData = res.data.data as ListData[];
-
+        // Sinkronisasi kolaborator (assignedTo)
+        const listsData = res.data.data.map((list: ListData) => ({
+          ...list,
+          assignedTo: list.assignedTo || [], // Tambahkan kolaborator dari response backend
+        })) as ListData[];
+  
         toasterController.callToast({
           message: "Sukses mengambil data list",
-          type: "success"
+          type: "success",
         });
-        setListsData(listsData);
+        setListsData(listsData); // Set listsData ke state setelah sinkronisasi
       })
       .catch((err) => {
         console.log(err);
         toasterController.callToast({
           message: "Error mengambil data list",
-          type: "error"
+          type: "error",
         });
       });
-  };
+  };  
+  
 
   const listsCreate = ({ boardId }: { boardId: string }) => {
     toasterController.callToast({
@@ -690,13 +702,7 @@ export const CredentialsProvider = ({
       });
   };
 
-  const commentsDelete = ({ 
-    commentId,
-    cardId 
-  }: { 
-    commentId: string;
-    cardId: string; 
-  }) => {
+  const commentsDelete = ({ commentId }: { commentId: string }) => {
     toasterController.callToast({
       message: "Menghapus comment...",
       type: "info"
@@ -712,14 +718,7 @@ export const CredentialsProvider = ({
           type: "success"
         });
         // refetch comment data
-        // refetch comment data
-        // if (lookingCard?._id) {
-          // commentsFetch({ cardId: lookingCard._id });
-        // } else {
-          // console.error("Card ID is missing. Can't refetch comments");
-        // }
-        // commentsFetch({ cardId: lookingCard?._id || "" });
-        commentsFetch({ cardId });
+        commentsFetch({ cardId: lookingCard?._id || "" });
       })
       .catch((err) => {
         console.log(err);
