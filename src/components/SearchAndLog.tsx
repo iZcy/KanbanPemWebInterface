@@ -53,7 +53,7 @@ const SearchAndLog = ({
         <ButtonCustom
           onClick={() => {
             toasterController.confirmationToast.createConfirmation({
-              message: "Apakah Anda yakin ingin Logout?",
+              message: "Melanjutkan proses Logout?",
               onYes: credentialsController.logoutAction
             });
           }}
