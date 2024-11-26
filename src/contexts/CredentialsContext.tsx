@@ -99,7 +99,6 @@ interface CredentialsFlowController {
   setLookingBoard: React.Dispatch<React.SetStateAction<BoardData | null>>;
   boardFetch: () => void;
   boardSearch: (query: string) => void;
-  // boardCreate: (data: { title: string; description: string; visibility: "private" | "public" }) => Promise<void>;
   boardCreate: (data: {
     title: string;
     description: string;
@@ -168,12 +167,7 @@ export const CredentialsProvider = ({
   const [lookingList, setLookingList] = useState<ListData | null>(null);
   const [lookingCard, setLookingCard] = useState<CardData | null>(null);
 
-  const emptyAll = () => {
-    setBoardData([]);
-    setListsData([]);
-    setCardsData([]);
-    setCommentsData([]);
-  };
+  const emptyAll = () => {};
 
   const roleAction = (): boolean => {
     axios
