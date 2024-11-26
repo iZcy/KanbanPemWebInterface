@@ -4,6 +4,7 @@ import ButtonCustom from "./ButtonCustom";
 import SearchBar from "./SearchBar";
 import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useSearchContext } from "@/contexts/SearchContext";
+import { useToasterContext } from "@/contexts/ToasterContext";
 
 const SearchAndLog = ({
   placeholder,
@@ -14,6 +15,7 @@ const SearchAndLog = ({
 }) => {
   const router = useRouter();
   const credentialsController = useCredentialsContext();
+  const toasterController = useToasterContext();
   const searchController = useSearchContext();
   return (
     <>
@@ -49,7 +51,12 @@ const SearchAndLog = ({
           classNameInput="w-full"
         />
         <ButtonCustom
-          onClick={credentialsController.logoutAction}
+          onClick={() => {
+            toasterController.confirmationToast.createConfirmation({
+              message: "Apakah Anda yakin ingin Logout?",
+              onYes: credentialsController.logoutAction
+            });
+          }}
           text="Logout"
           type="secondary"
           classNameDiv="w-fit"
