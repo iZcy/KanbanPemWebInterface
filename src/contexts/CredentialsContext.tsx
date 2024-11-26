@@ -46,11 +46,11 @@ export interface ContributorData {
 }
 
 export interface ListData {
-  _id: string;
+  _id?: string;
   title: string;
   boardId: string;
   position: number;
-  createdAt: string;
+  createdAt?: string;
 }
 
 interface CardData {
@@ -116,7 +116,7 @@ interface CredentialsFlowController {
   lookingList: ListData | null;
   setLookingList: React.Dispatch<React.SetStateAction<ListData | null>>;
   listsFetch: ({ boardId }: { boardId: string }) => void;
-  listsCreate: ({ boardId }: { boardId: string }) => void;
+  listsCreate: ({ boardId, data }: { boardId: string, data: ListData }) => void;
   listsUpdate: (data: ListData) => void;
   listsDelete: ({ listId }: { listId: string }) => void;
   cardsData: CardData[];
@@ -389,7 +389,11 @@ export const CredentialsProvider = ({
       });
   };
 
-  const listsCreate = ({ boardId }: { boardId: string }) => {
+  const listsCreate = ({ boardId, data = {
+    title: "New List",
+    boardId: "New List Board",
+    position: 0
+  } }: { boardId: string, data: ListData }) => {
     toasterController.callToast({
       message: "Membuat list...",
       type: "info"
@@ -399,9 +403,9 @@ export const CredentialsProvider = ({
       .post(
         apiRoute.lists.mainRoute + boardId,
         {
-          title: "New List",
-          boardId: "New List Board",
-          position: 0
+          title: data.title,
+          boardId: data.boardId,
+          position: data.position
         },
         {
           withCredentials: true

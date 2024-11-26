@@ -6,6 +6,7 @@ import { useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { HiPlusCircle, HiTrash } from "react-icons/hi";
+import CreateListModal from "@/components/CreateListModal"; // Import the CreateListModal component
 
 const ListPage = () => {
   const router = useRouter();
@@ -22,6 +23,10 @@ const ListPage = () => {
     });
   }, [board]);
 
+  useEffect(() => {
+    setList(credentialsController.listsData);
+  }, [credentialsController.listsData]);
+
   const [titleEditMode, setTitleEditMode] = useState(false);
   const [presentTitle, setPresentTitle] = useState(selectedBoard?.title);
 
@@ -29,6 +34,8 @@ const ListPage = () => {
   const [presentDescription, setPresentDescription] = useState(
     selectedBoard?.description
   );
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
   const handleTitleUpdate = () => {
     setTitleEditMode(false);
@@ -54,6 +61,26 @@ const ListPage = () => {
       createdAt: currentData?.createdAt || "",
       userId: currentData?.userId || ""
     });
+  };
+
+  const handleCreateList = async (
+      title: string,
+      position: number,
+      createdAt: string,
+  ) => {
+    const newList = {
+      title,
+      position,
+      boardId: board as string
+    }
+
+    credentialsController.listsCreate({
+      boardId: board as string,
+      data: newList
+    });
+
+    setLists((prevLists) => [...prevLists, newList]);
+    setIsModalOpen(false); // Close modal after saving
   };
 
   return (
@@ -90,9 +117,7 @@ const ListPage = () => {
           />
           <HiPlusCircle
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
-            onClick={() => {
-              credentialsController.listsCreate({ boardId: board as string });
-            }}
+            onClick={() => setIsModalOpen(true)} // Open modal when clicked
           />
         </div>
         <div className="flex items-center gap-[.5vw] font-secondary">
@@ -142,8 +167,25 @@ const ListPage = () => {
           />
         ))}
       </div>
+
+      {/* Create List Modal */}
+      <CreateListModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)} // Close modal on cancel
+        onSave={(title, position, createdAt) => {
+          handleCreateList(title, position, createdAt)
+        }} // Save new list on save
+      />
     </div>
   );
 };
 
 export default ListPage;
+function setList(listsData: import("@/contexts/CredentialsContext").ListData[]) {
+  throw new Error("Function not implemented.");
+}
+
+function setLists(arg0: (prevLists: any) => any[]) {
+  throw new Error("Function not implemented.");
+}
+
