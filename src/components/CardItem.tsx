@@ -22,7 +22,7 @@ const CardItem = ({
   createdAt = "",
   cardType,
   dueDate = "",
-  width = "w-[30vw]"
+  width = "w-[29.5vw]"
 }: CardItemProps) => {
   const visibilityLabel =
     visibility === "public"
