@@ -8,7 +8,7 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState} from "react";
-import { AiFillEdit } from "react-icons/ai";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 // import { CardData } from "@/contexts/CredentialsContext";
 
 const CardPage = () => {
@@ -237,18 +237,79 @@ const CardPage = () => {
             <div className="flex flex-col gap-[.5vw] h-[50vh] overflow-y-scroll">
               {credentialsController.commentsData.map((comment, idx) => {
                 const isTheUser =
-                  comment.userId === credentialsController.accData?._id;
+                  comment?.userId?._id === credentialsController.accData?._id;
                 return (
                   <div
                     key={idx}
                     className={
                       "w-10/12 h-fit flex flex-col rounded-[.6vw] border-darkGray border-[.2vw] p-[1vw] " +
-                      (isTheUser ? "self-end" : "self-start")
+                      (isTheUser ? "self-end bg-[#9faec7]" : "self-start")
                     }
                   >
-                    {isTheUser && <AiFillEdit className="text-darkGray" />}
-                    <p className="font-secondary text-vw-sm font-bold text-darkGray w-full">
-                      {comment.userId + " "}
+                    <div className="w-full flex justify-end items-center text-vw-sm -mb-5 gap-2">
+{/* {isTheUser && <AiFillEdit className="text-darkGray justify-end items-end text-right" />} */}
+                      {/* Edit Button */}
+                      {/* <div className="">
+                        <AiFillEdit 
+                          className="text-darkGray justify-end items-end text-right"
+                          onClick={() => {}} />
+                      </div> */}
+
+                      {/* Delete Button */}
+                      {/* <div>
+                        <AiFillDelete 
+                          className="text-darkGray justify-end items-end text-right"
+                          onClick={() => {}}/>
+                      </div> */}
+
+                      {/* ChatGPT */}
+                      {/* {isTheUser && ( */}
+                      {isTheUser && (
+                        <>
+                          {/* Edit Button */}
+                          <div className="cursor-pointer">
+                            <AiFillEdit
+                              className="text-darkGray cursor-pointer"
+                              onClick={() => {
+                                const updatedContent = prompt(
+                                  "Edit your comment:",
+                                  comment.content
+                                );
+                                if (updatedContent !== null && updatedContent.trim()) {
+                                  credentialsController.commentsUpdate({
+                                    commentId: comment._id,
+                                    data: {
+                                      ...comment,
+                                      content: updatedContent
+                                    }
+                                  });
+                                }
+                              }}
+                              />
+                          </div>
+                          
+                          {/* Delete Button */}
+                          <div className="cursor-pointer">
+                            <AiFillDelete
+                              className="text-darkGray cursor-pointer"
+                              onClick={() => {
+                                if (confirm("Are you sure you want to delete this comment?")) {
+                                  credentialsController.commentsDelete({
+                                    commentId: comment._id,
+                                    cardId: card as string
+                                  });
+                                }
+                              }}
+                            />
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <p className="font-secondary text-vw-sm font-bold text-darkGray w-11/12">
+                      {/* {comment.userId + " "} */}
+                      {typeof comment?.userId === "object" && comment?.userId != null
+                        ? comment?.userId?.username
+                        : "Anonymous" }{" "}
                       <span className="italic font-normal">
                         {comment.isEdited && " (edited)"}
                       </span>
@@ -275,7 +336,7 @@ const CardPage = () => {
             </div>
             <div className="w-full h-fit flex items-center rounded-[.6vw] gap-[1vw] align-bottom">
               <InputCustom
-                placeholder="Please type here..."
+                placeholder="Type your comment here..."
                 value={comment}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault();
@@ -285,7 +346,21 @@ const CardPage = () => {
                 classNameInput="w-full border-darkGray"
               />
               <ButtonCustom
-                onClick={() => {}}
+                onClick={() => {
+                  // Check if the comment is empty or not
+                  if (!comment.trim()) {
+                    alert("Comment can't be empty!");
+                    return;
+                  }
+                  
+                  // Use the commentsCreate function
+                  credentialsController.commentsCreate({
+                    cardId: card as string,
+                    content: comment
+                  });
+                  
+                  setComment("");
+                }}
                 text="Send"
                 type="primary"
                 classNameDiv="w-fit"
