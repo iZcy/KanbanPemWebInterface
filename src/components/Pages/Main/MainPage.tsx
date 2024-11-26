@@ -53,9 +53,7 @@ const BoardPage = () => {
 
   return (
     <div className="w-full h-full overflow-y-clip">
-      {/* Wrapper for content, apply blur when modal is open */}
-      <div
-        className={`transition-filter duration-300 h-full ${
+      <div className={`transition-filter duration-300 h-full ${
           isModalOpen ? "blur-md" : ""
         }`}
       >
@@ -79,8 +77,9 @@ const BoardPage = () => {
           </div>
           
           <SearchAndLog placeholder="Search board..." noBack={true} />
+          
           <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] h-full overflow-y-scroll">
-            {credentialsController.boardData.map((board, index) => (
+            {filteredBoards.map((board, index) => (
               <CardItem
                 key={index}
                 title={board.title}
