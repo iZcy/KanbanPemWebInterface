@@ -712,6 +712,11 @@ export const CredentialsProvider = ({
           type: "success"
         });
         // refetch comment data
+        if (lookingCard?._id) {
+          commentsFetch({ cardId: lookingCard._id });
+        } else {
+          console.error("Card ID is missing. Can't refetch comments");
+        }
         commentsFetch({ cardId: lookingCard?._id || "" });
       })
       .catch((err) => {
