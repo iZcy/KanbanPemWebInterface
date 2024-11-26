@@ -3,7 +3,7 @@
 import apiRoute from "@/api/routes";
 import CardItem from "@/components/CardItem";
 import SearchAndLog from "@/components/SearchAndLog";
-import { useCredentialsContext } from "@/contexts/CredentialsContext";
+import { ListData, useCredentialsContext } from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
@@ -12,7 +12,6 @@ import { HiPlusCircle, HiTrash } from "react-icons/hi";
 
 const KanbanPage = () => {
   const router = useRouter();
-  const params = useParams();
   const { list } = useParams();
 
   const credentialsController = useCredentialsContext();
@@ -31,9 +30,7 @@ const KanbanPage = () => {
     credentialsController.lookingList
   );
 
-  const [selectedBoard, setSelectedBoard] = useState(
-    credentialsController.lookingBoard
-  );
+  const [presentTitle, setPresentTitle] = useState(selectedList?.title);
 
   useEffect(() => {
     axios
@@ -41,26 +38,16 @@ const KanbanPage = () => {
         withCredentials: true
       })
       .then((res) => {
-        setSelectedList(res.data.data);
+        const data = res.data.data as ListData;
+        setSelectedList(data);
+        setPresentTitle(data.title);
       })
       .catch((err) => {
         console.log(err);
       });
-
-    axios
-      .get(apiRoute.board.singleRoute + params.board, {
-        withCredentials: true
-      })
-      .then((res) => {
-        setSelectedBoard(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [list, params.board]);
+  }, [list]);
 
   const [titleListEditMode, setListTitleEditMode] = useState(false);
-  const [presentTitle, setPresentTitle] = useState(selectedList?.title);
 
   const handleListTitleUpdate = () => {
     setListTitleEditMode(false);
@@ -78,7 +65,7 @@ const KanbanPage = () => {
     <div className="w-full h-full flex flex-col gap-[.5vw]">
       <div className="flex text-darkGray items-center">
         <div className="flex items-center gap-[.5vw] grow">
-        {titleListEditMode ? (
+          {titleListEditMode ? (
             <input
               type="text"
               value={presentTitle}
@@ -93,12 +80,12 @@ const KanbanPage = () => {
             />
           ) : (
             <p
-            className="font-primary font-bold text-vw-md cursor-pointer"
-            onClick={() => setListTitleEditMode(true)}
-          >
-            {presentTitle}
-          </p>
-        )}
+              className="font-primary font-bold text-vw-md cursor-pointer"
+              onClick={() => setListTitleEditMode(true)}
+            >
+              {presentTitle}
+            </p>
+          )}
 
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"

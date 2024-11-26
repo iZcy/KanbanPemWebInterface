@@ -228,6 +228,43 @@ const CardPage = () => {
           </div>
           <div className="flex gap-[.5vw]">
             <ButtonCustom
+              onClick={() => {
+                toasterController.confirmationToast.createConfirmation({
+                  message: "Menghapus Card " + selectedCard?.title,
+                  onYes: () => {
+                    axios
+                      .delete(apiRoute.cards.mainRoute + card, {
+                        withCredentials: true
+                      })
+                      .then(() => {
+                        toasterController.callToast({
+                          message:
+                            "Card " +
+                            selectedCard?.title +
+                            " is successfully removed",
+                          type: "success"
+                        });
+                        router.replace("/" + params.board + "/" + params.list);
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        toasterController.callToast({
+                          message:
+                            "Collaborator " +
+                            selectedCard?.title +
+                            " is failed to be removed",
+                          type: "error"
+                        });
+                      });
+                  }
+                });
+              }}
+              text="Delete"
+              type="primary"
+              classNameDiv="w-fit"
+              classNameInput="w-full"
+            />
+            <ButtonCustom
               onClick={() => {}}
               text="Status"
               type="secondary"
@@ -430,37 +467,40 @@ const CardPage = () => {
                           message: "Hapus contributor?",
                           onYes: () => {
                             axios
-                          .delete(apiRoute.cards.collab + selectedCard?._id, {
-                            data: { userId: cont?._id },
-                            withCredentials: true
-                          })
-                          .then(() => {
-                            // remove from list
-                            const newContributors = contributors.filter(
-                              (con) => con._id !== cont?._id
-                            );
-                            setContributors(newContributors);
+                              .delete(
+                                apiRoute.cards.collab + selectedCard?._id,
+                                {
+                                  data: { userId: cont?._id },
+                                  withCredentials: true
+                                }
+                              )
+                              .then(() => {
+                                // remove from list
+                                const newContributors = contributors.filter(
+                                  (con) => con._id !== cont?._id
+                                );
+                                setContributors(newContributors);
 
-                            // Toast
-                            toasterController.callToast({
-                              message:
-                                "Collaborator " +
-                                cont?.username +
-                                " is successfully removed",
-                              type: "success"
-                            });
-                          })
-                          .catch((err) => {
-                            // show error
-                            console.log(err);
-                            // Toast
-                            toasterController.callToast({
-                              message: "Collaborator removal error: " + err,
-                              type: "error"
-                            });
-                          });
+                                // Toast
+                                toasterController.callToast({
+                                  message:
+                                    "Collaborator " +
+                                    cont?.username +
+                                    " is successfully removed",
+                                  type: "success"
+                                });
+                              })
+                              .catch((err) => {
+                                // show error
+                                console.log(err);
+                                // Toast
+                                toasterController.callToast({
+                                  message: "Collaborator removal error: " + err,
+                                  type: "error"
+                                });
+                              });
                           }
-                        })
+                        });
                         // axios
                         //   .delete(apiRoute.cards.collab + selectedCard?._id, {
                         //     data: { userId: cont?._id },

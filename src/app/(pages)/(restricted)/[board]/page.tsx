@@ -86,15 +86,15 @@ const ListPage = () => {
   };
 
   const handleCreateList = async (
-      title: string,
-      position: number,
-      createdAt: string,
+    title: string,
+    position: number,
+    createdAt: string
   ) => {
     const newList = {
       title,
       position,
       boardId: board as string
-    }
+    };
 
     credentialsController.listsCreate({
       boardId: board as string,
@@ -201,7 +201,7 @@ const ListPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)} // Close modal on cancel
         onSave={(title, position, createdAt) => {
-          handleCreateList(title, position, createdAt)
+          handleCreateList(title, position, createdAt);
         }} // Save new list on save
       />
     </div>
