@@ -43,11 +43,11 @@ const BoardPage = () => {
     <div className="w-full h-full overflow-y-clip">
       {/* Wrapper for content, apply blur when modal is open */}
       <div
-        className={`transition-filter duration-300 ${
+        className={`transition-filter duration-300 h-full ${
           isModalOpen ? "blur-md" : ""
         }`}
       >
-        <div className="w-full h-screen flex flex-col gap-[.5vw]">
+        <div className="w-full h-full flex flex-col gap-[.5vw]">
           <div className="flex text-darkGray items-center">
             <div className="flex items-center gap-[.5vw] grow">
               <p className="font-primary font-bold text-vw-md">Select Board</p>
@@ -68,7 +68,7 @@ const BoardPage = () => {
             </div>
           </div>
           <SearchAndLog placeholder="Search board..." noBack={true} />
-          <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] overflow-y-scroll">
+          <div className="w-full flex-wrap flex gap-[1vw] mt-[2.5vw] h-full overflow-y-scroll">
             {credentialsController.boardData.map((board, index) => (
               <CardItem
                 key={index}
