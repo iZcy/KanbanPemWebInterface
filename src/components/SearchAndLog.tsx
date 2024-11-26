@@ -35,7 +35,7 @@ const SearchAndLog = ({
           }}
           text="Back"
           type="primary"
-          classNameDiv={"w-fit " + noBack && "hidden"}
+          classNameDiv={"w-fit " + (noBack && "hidden")}
           classNameInput="w-full"
         />
         <ButtonCustom
