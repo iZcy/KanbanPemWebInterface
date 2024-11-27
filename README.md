@@ -1,7 +1,7 @@
 # 🚀Kanban Board Website Interface Source Code📋
 
 ## 🪐 Our Deployment Website
-[Kanban Website Board Management](https://kanban-api.izcy.tech/)
+[Kanban Website Board Management](https://kanban.izcy.tech/)
 
 ## 🌟 Project Vision
 KanbanPemWebInterface is more than just a project management tool—it's a collaborative ecosystem designed to streamline workflow, enhance team productivity, and bring clarity to complex project landscapes.
