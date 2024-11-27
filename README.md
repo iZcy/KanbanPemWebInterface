@@ -45,7 +45,8 @@ npm install
 # Start development server
 npm run dev
 ```
-🌐 Access your application: [http://localhost:3000](http://localhost:3000)
+🌐 Access our website: [Kanban Board](https://kanban-api.izcy.tech/)
+🙇 Wanted to try the code? [htpp://localhost:3000](http://localhost:3000)
 
 ### 4. Key Features
 - 📝 Drag-and-Drop Task Management
