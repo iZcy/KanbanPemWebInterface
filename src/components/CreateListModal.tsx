@@ -36,7 +36,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
   if (!isOpen) return null; // Jangan render jika modal tidak terbuka
 
   return (
-    <div className="fixed inset-0 bg-opacity-30 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[#FFFFFF] p-6 rounded-lg w-1/3 border-2 border-darkGray shadow-lg">
         <h2 className="text-2xl font-bold text-darkGray mb-6 text-center">Create New List</h2>
 
@@ -72,7 +72,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
 
         {/* Input Created At */}
         <div className="mb-4">
-          <label htmlFor="createdAt" className="font-secondary font-bold text-darkGray mb-1 block">
+          <label htmlFor="createdAt" className="block text-sm font-medium text-gray-700">
             Created At
           </label>
           <input
