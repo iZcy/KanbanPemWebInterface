@@ -42,7 +42,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
 
         {/* Input Title */}
         <div className="mb-4">
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="font-secondary font-bold text-darkGray mb-1 block">
             List Title
           </label>
           <input
@@ -57,7 +57,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
 
         {/* Input Position */}
         <div className="mb-4">
-          <label htmlFor="position" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="position" className="font-secondary font-bold text-darkGray mb-1 block">
             Position
           </label>
           <input
@@ -72,7 +72,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
 
         {/* Input Created At */}
         <div className="mb-4">
-          <label htmlFor="createdAt" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="createdAt" className="font-secondary font-bold text-darkGray mb-1 block">
             Created At
           </label>
           <input

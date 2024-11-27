@@ -129,7 +129,7 @@ const ListPage = () => {
               {presentTitle}
             </p>
           )}
-          <p className="font-primary text-vw-md">{" / Select List"}</p>
+          <p className="font-primary font-bold text-vw-md">{" / Select List"}</p>
           <HiTrash
             className="text-vw-lg hover:opacity-50 duration-300 cursor-pointer"
             onClick={() => {
