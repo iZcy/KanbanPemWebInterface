@@ -11,6 +11,7 @@ import {
 } from "@/contexts/CredentialsContext";
 import { useToasterContext } from "@/contexts/ToasterContext";
 import axios from "axios";
+import { enumDeadline } from "@/helper/typesEnums";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
@@ -22,6 +23,7 @@ const CardPage = () => {
   const { card } = useParams();
   const [isActive, setIsActive] = useState(false);
   const [comment, setComment] = useState("");
+  const [status, setStatus] = useState("To-Do");
 
   const credentialsController = useCredentialsContext();
   const toasterController = useToasterContext();
@@ -106,10 +108,12 @@ const CardPage = () => {
   }, [params.list, params.board, card]);
 
   const [isEditing, setIsEditing] = useState(false);
-
   const [descriptionEditMode, setDescriptionEditMode] = useState(false);
-
   const [isEditingDeadline, setIsEditingDeadline] = useState(false);
+
+  const handleAddUser = async () => {
+    setIsActive(true);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -163,6 +167,31 @@ const CardPage = () => {
       data: selectedCard!
     });
   };
+
+  const handleStatusChange = async () => {
+    const newStatus = status === "To-Do" 
+      ? "In-Progress" 
+      : status === "In-Progress" 
+      ? "Done" 
+      : "To-Do"; // Cycle through the statuses
+
+    const sendStatus = newStatus.toLowerCase();
+    const newData: CardData = {
+      ...selectedCard as CardData,
+      status: sendStatus as enumDeadline,
+      _id: selectedCard?._id || ""
+    };
+
+    setStatus(newStatus);
+  try { 
+    await credentialsController.cardsUpdate({ 
+      cardId: selectedCard?._id || "", 
+      data: newData
+    });
+  } catch (error) {
+    console.error("Failed to update card status:", error);
+  }
+};
 
   //  const Comments = ({ comments, userId, onCommentUpdate, onCommentDelete }) => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null); // Track which comment is being edited
@@ -280,8 +309,8 @@ const CardPage = () => {
               classNameInput="w-full"
             />
             <ButtonCustom
-              onClick={() => {}}
-              text="Status"
+              onClick={handleStatusChange}
+              text={`status: ${status}`} 
               type="secondary"
               classNameDiv="w-fit"
               classNameInput="w-full"
@@ -558,9 +587,7 @@ const CardPage = () => {
             )}
           </div>
           <ButtonCustom
-            onClick={() => {
-              setIsActive(true);
-            }}
+            onClick={handleAddUser}
             text="Add"
             type="primary"
             classNameDiv="w-fit"
