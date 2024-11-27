@@ -36,7 +36,7 @@ const CreateListModal: React.FC<CreateListModalProps> = ({ isOpen, onClose, onSa
   if (!isOpen) return null; // Jangan render jika modal tidak terbuka
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
       <div className="bg-[#FFFFFF] p-6 rounded-lg w-1/3 border-2 border-darkGray shadow-lg">
         <h2 className="text-2xl font-bold text-darkGray mb-6 text-center">Create New List</h2>
 
